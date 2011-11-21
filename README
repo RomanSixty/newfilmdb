@@ -1,0 +1,17 @@
+This project is a custom built movie database for my collection. You are witnessing my first steps into new database territory here since I've used MongoDB as backend storage for movie data.
+
+Features:
+
+  * movie data (title, genres, ratings, cast, director, plot outline, poster) is pulled from IMDb (http://www.imdb.com)
+  * gallery view of movie posters to browse the collection
+  * detailed view in right sidebar
+  * text search and filter options (by genre, actor, director, language)
+
+Requirements (contained in this repository):
+
+  * IMDBPHP (http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper
+  * jQuery (http://jquery.com/) for some AJAX stuff
+  * jQuery Lazy Load Plugin (http://www.appelsiini.net/projects/lazyload) for loading movie posters only when in viewport
+
+
+- LX
