@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * dieses Skript enthält Funktionen, die HTML-Schnipsel erzeugen
+ * diese werden sowohl beim initialen Aufruf der Seite benötigt
+ * als auch von der RPC-Schnittstelle aus aufgerufen (vgl. rpc.php)
+ */
+
+/**
+ * HTML-Code für das Dashboard im Seitenkopf mit Suchfiltern
+ *
+ * @return String HTML-Code
+ */
 function getDashboard()
 {
     $snippet  = '<section id="dashboard">';
@@ -49,6 +60,12 @@ function getDashboard()
     return $snippet;
 }
 
+/**
+ * HTML-Schnipsel eines einzelnen Films der Filmliste
+ *
+ * @param Array $movie Filmdaten aus der MongoDB
+ * @return String HTML-Code
+ */
 function getMovieSnippet ( $movie )
 {
     $snippet  = '<section data-imdbid="' . $movie [ 'imdb_id' ] . '"
@@ -73,6 +90,12 @@ function getMovieSnippet ( $movie )
     return $snippet;
 }
 
+/**
+ * HTML-Schnipsel der Film-Detailansicht für die Sidebar
+ *
+ * @param Integer $imdb_id IMDb-ID
+ * @return String HTML-Code
+ */
 function getMovieDetails ( $imdb_id )
 {
     $movie = getSingleMovie ( $imdb_id );

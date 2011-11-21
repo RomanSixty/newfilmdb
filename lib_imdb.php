@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * dieses Skript beinhaltet die Funktionen, mit denen
+ * aus IMDBPHP die Filmdaten geladen und strukturiert werden
+ */
+
 require("imdbapi/imdb.class.php");
 chdir ( 'imdbapi' );
 
@@ -61,6 +67,12 @@ function getMovie ( $imdb_id )
    );
 }
 
+/**
+ * Helper-Funktion um gescrapete Daten in passenden Zeichensatz zu bringen
+ *
+ * @param String $string Zeichenkette
+ * @return String normalisierte UTF8-Zeichenkette
+ */
 function _charsetPrepare ( $string )
 {
     $string = strip_tags ( $string );
