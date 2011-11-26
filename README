@@ -13,5 +13,8 @@ Requirements (contained in this repository):
   * jQuery (http://jquery.com/) for some AJAX stuff
   * jQuery Lazy Load Plugin (http://www.appelsiini.net/projects/lazyload) for loading movie posters only when in viewport
 
+Other requirements (not contained):
+
+  * PECL::intl (for correct utf82ascii-transliterations)
 
 - LX

@@ -63,7 +63,8 @@ function getMovie ( $imdb_id )
             'languages'  => array(),
             'notes'      => '',
             'qualitaet'  => ''
-        )
+        ),
+        'fulltext'       => ''
    );
 }
 

@@ -78,25 +78,9 @@ function getFilters ( $form )
     // Volltextsuche
     if ( !empty ( $form [ 'fulltext' ] ) )
     {
-        $terms = explode ( ' ', strtolower ( $form [ 'fulltext' ] ) );
+        $terms = explode ( ' ', _transliterate ( $form [ 'fulltext' ] ) );
 
-        $regex = '/(\b' . implode ( '\b|\b', $terms ) . '\b)/i';
-
-        $ft_func = 'function() {
-            if (    this.imdb.title_orig.search(' . $regex . ') != -1
-                 || this.imdb.title_deu.search(' . $regex . ') != -1 )
-                return true;
-
-            if ( this.imdb.cast && this.imdb.cast.toString().search(' . $regex . ') != -1 )
-                return true;
-
-            if ( this.imdb.director && this.imdb.director.toString().search(' . $regex . ') != -1 )
-                return true;
-
-            return false;
-        }';
-
-        $filter [ '$where' ] = $ft_func;
+        $filter [ 'fulltext' ] = array ( '$all' => $terms );
     }
 
     // Sprachfilter (ODER)
@@ -127,6 +111,8 @@ function insertMovie ( $movie )
 {
     global $collection;
 
+    updateFulltext ( $movie );
+
     $collection -> save ( $movie );
 }
 
@@ -140,8 +126,52 @@ function updateMovie ( $imdb_id, $movie )
 {
     global $collection;
 
+    updateFulltext ( $movie );
+
     $collection -> update ( array ( 'imdb.imdb_id' => intval ( $imdb_id ) ),
                             $movie );
+}
+
+/**
+ * Volltextindex eines Films erzeugen/aktualisieren
+ *
+ * @param Array $movie MongoDB-Filmdaten
+ */
+function updateFulltext ( &$movie )
+{
+    // alle zu indizierenden Felder zusammensuchen
+
+    $fulltext = $movie [ 'imdb' ][ 'title_orig' ] . ' '
+              . $movie [ 'imdb' ][ 'title_deu'  ] . ' '
+              . implode ( ' ', $movie [ 'imdb' ][ 'director' ] ) . ' '
+              . implode ( ' ', $movie [ 'imdb' ][ 'cast'     ] );
+
+    $fulltext = _transliterate ( $fulltext );
+
+    // jedes Wort nur einmal
+    $fulltext = array_unique ( explode ( ' ', $fulltext ) );
+
+    // array_values hier, damit die Elemente ohne Lücken durchnummeriert
+    // sind, andernfalls kann die MongoDB darin nicht vernünftig suchen
+    $movie [ 'fulltext' ] = array_values ( $fulltext );
+}
+
+/**
+ * Zeichenkette transliterieren
+ *
+ * @param String $string Zeichenkette
+ * @return String normalisierte Zeichenkette
+ */
+function _transliterate ( $string )
+{
+    setlocale ( 'LC_ALL', 'de_DE' );
+
+    $string = iconv ( 'utf-8', 'ASCII//TRANSLIT', $string );
+
+    $string = preg_replace ( '~[^\w ]~', '', $string );
+    $string = preg_replace ( '~[\s]+~', ' ', $string );
+
+    return strtolower ( $string );
 }
 
 /**
