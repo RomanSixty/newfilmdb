@@ -184,6 +184,9 @@ function getMovieDetails ( $imdb_id )
         $snippet .= '  <dl><dt>Qualität</dt><dd>' . $movie [ 'custom' ][ 'quality' ] . '</dd></dl>';
     }
 
+    if ( isAdmin() )
+        $snippet .= '<a href="#" class="addlink" data-imdbid="' . $movie [ 'imdb' ][ 'imdb_id' ] . '"><img src="./fdb_img/add.png" alt="add"/></a>';
+
     $snippet .= '</section>';
 
     $snippet .= '<!-- ' . print_r($movie, true) . ' -->';
@@ -191,19 +194,45 @@ function getMovieDetails ( $imdb_id )
     return $snippet;
 }
 
-function getEditForm ( $imdb_id )
+/**
+ * Formular zum Bearbeiten oder Anlegen eines Films
+ *
+ * @param Integer $imdb_id IMDb-ID des zu bearbeitenden oder des zuletzt gesehenen Films
+ * @param Boolean $edit Bearbeiten: true, Anlegen: false
+ * @return String HTML-Code
+ */
+function getEditForm ( $imdb_id, $edit = true )
 {
-    $movie = getSingleMovie ( $imdb_id );
+    if ( $edit )
+    {
+        $movie = getSingleMovie ( $imdb_id );
 
-    $snippet  = '<form method="POST" action="./" id="edit_movie">';
+        $snippet = '<h2>Film bearbeiten</h2>';
+    }
+    else
+        $snippet = '<h2>Neuen Film anlegen</h2>';
 
-    $snippet .= '<input type="hidden" name="act" value="save_movie" />';
-    $snippet .= '<input type="hidden" name="imdb_id" value="' . $movie [ 'imdb' ][ 'imdb_id' ] . '" />';
+    $snippet .= '<form method="POST" action="./" id="edit_movie">';
+
+    if ( $edit )
+    {
+        $snippet .= '<input type="hidden" name="act" value="save_movie" />';
+        $snippet .= '<input type="hidden" name="imdb_id" value="' . $movie [ 'imdb' ][ 'imdb_id' ] . '" />';
+    }
+    else
+    {
+        $snippet .= '<input type="hidden" name="act" value="add_movie" />';
+
+        $snippet .= '<fieldset>';
+        $snippet .= '<legend><label for="imdbid">IMDb-ID*:</label></legend>';
+        $snippet .= '<input type="text" maxlength="7" size="7" id="imdbid" name="imdb_id" value="" />';
+        $snippet .= '</fieldset>';
+    }
 
     // Sprache
 
     $snippet .= '<fieldset>';
-    $snippet .= '<legend><label>Sprache:</label></legend>';
+    $snippet .= '<legend><label>Sprache*:</label></legend>';
 
     $languages = array ( 'deu' => 'deutsch',
                          'eng' => 'englisch',
@@ -226,7 +255,7 @@ function getEditForm ( $imdb_id )
     $snippet .= '<fieldset>';
     $snippet .= '<legend><label>Wertung:</label></legend>';
 
-    foreach ( array ( 0,1,2,3,4,5,6,7,8,9 ) as $rating )
+    foreach ( array ( 0,1,2,3,4,5,6,7,8,9,10 ) as $rating )
     {
         $checked = ( $movie [ 'custom' ][ 'rating' ] == $rating )
                  ? ' checked="checked"'
@@ -252,7 +281,7 @@ function getEditForm ( $imdb_id )
     $snippet .= '<textarea id="quality" name="custom[quality]">' . $movie [ 'custom' ][ 'quality' ] . '</textarea>';
     $snippet .= '</fieldset>';
 
-    $snippet .= '<input type="button" class="button abort" value="abbrechen" />';
+    $snippet .= '<input type="button" class="button abort" value="abbrechen" data-imdbid="' . $imdb_id . '" />';
     $snippet .= '<input type="submit" class="button submit" value="speichern" />';
 
     $snippet .= '</form>';

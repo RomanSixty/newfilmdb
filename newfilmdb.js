@@ -42,16 +42,38 @@ function initContent()
 function initForm()
 {
     $('#edit_movie').submit(function(){
+        $('#details').append('<div id="overlay"></div>');
+
         $.ajax({
             url: 'rpc.php',
             dataType: 'html',
             data: $('#edit_movie').serialize(),
             success: function(data) {
                 $('#details').html(data);
+
+                // da wir nicht wissen, ob hier eine Detailansicht
+                // oder ein Formular zurückkommt, machen wir beides
                 initDetails();
+                initForm();
             }
         });
         return false;
+    });
+
+    $('#edit_movie .abort').click(function(){
+        $('#details').append('<div id="overlay"></div>');
+
+        var imdb_id = $(this).attr('data-imdbid');
+
+        $.ajax({
+            url: 'rpc.php',
+            dataType: 'html',
+            data: 'act=details&imdb_id=' + imdb_id,
+            success: function(data) {
+                $('#details').html(data);
+                initDetails();
+            }
+        });
     });
 }
 
@@ -112,6 +134,20 @@ function initDetails()
             data: 'act=edit&imdb_id=' + imdb_id,
             success: function(data) {
                 $('#details .associated').html(data);
+                initForm();
+            }
+        });
+    });
+
+    $('#details .addlink').click(function(){
+        var imdb_id = $(this).attr('data-imdbid');
+
+        $.ajax({
+            url: 'rpc.php',
+            dataType: 'html',
+            data: 'act=add&imdb_id=' + imdb_id,
+            success: function(data) {
+                $('#details').html(data);
                 initForm();
             }
         });

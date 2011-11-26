@@ -47,6 +47,15 @@ li[data-count]:after {
   color: #666;
 }
 
+#overlay {
+  background: rgba(255,255,255,0.7);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
 
 /* Liste */
 
@@ -260,8 +269,14 @@ li[data-count]:after {
   content: '';
 }
 
-/* Bearbeitungsformular */
+#details .addlink {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
 
+
+/* Bearbeitungsformular */
 #edit_movie fieldset {
   margin: 20px;
 }
