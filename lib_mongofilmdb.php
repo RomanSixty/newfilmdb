@@ -185,12 +185,12 @@ function directorHasOtherMovies ( $imdb_id, $director )
 {
     global $collection;
 
-    $other = $collection -> findOne (
+    $other = $collection -> find (
         array ( 'imdb.imdb_id'  => array ( '$ne' => intval ( $imdb_id ) ),
                 'imdb.director' => array ( '$in' => array ( $director ) ) )
-    );
+    ) -> count();
 
-    return ( !empty ( $other ) );
+    return $other;
 }
 
 /**
@@ -204,12 +204,12 @@ function actorHasOtherMovies ( $imdb_id, $actor )
 {
     global $collection;
 
-    $other = $collection -> findOne (
+    $other = $collection -> find (
         array ( 'imdb.imdb_id'  => array ( '$ne' => intval ( $imdb_id ) ),
                 'imdb.cast' => array ( '$in' => array ( $actor ) ) )
-    );
+    ) -> count();
 
-    return ( !empty ( $other ) );
+    return $other;
 }
 
 ?>

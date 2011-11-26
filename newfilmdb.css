@@ -9,6 +9,7 @@
 body {
   padding-top: 40px;
   padding-right: 550px;
+  background: #999;
 }
 
 a,
@@ -40,6 +41,12 @@ dl {
   overflow: hidden;
 }
 
+li[data-count]:after {
+  content: ' (' attr(data-count) ')';
+  font-size: 0.7em;
+  color: #666;
+}
+
 
 /* Liste */
 
@@ -51,6 +58,10 @@ dl {
   cursor: pointer;
   position: relative;
   background: url(./fdb_img/bg.jpg) no-repeat;
+  border-radius: 7px;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+  overflow: hidden;
 }
 
 #list .movie:hover:after {
@@ -60,7 +71,7 @@ dl {
   height: 100%;
   width: 100%;
   z-index: 2;
-  box-shadow: 0 0 20px #800;
+  box-shadow: inset 0 0 30px #700;
 }
 
 
@@ -102,6 +113,7 @@ dl {
 
 #dashboard label.section {
   padding: 0 5px 0 0;
+  text-shadow: 1px 1px #444;
 }
 
 #dashboard section.filter {
@@ -140,6 +152,7 @@ dl {
   padding: 20px;
   box-shadow: 0 10px 15px rgba(30,30,30,0.8);
   z-index: 11;
+  text-shadow: 1px 1px #fff;
 }
 
 #details header h1 {
@@ -147,9 +160,24 @@ dl {
   margin-bottom: 20px;
 }
 
+#details .card {
+  padding: 15px 20px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 2px 2px 5px #bbb;
+}
+
+#details .card:after {
+  content: '.';
+  clear: both;
+  visibility: hidden;
+  display: block;
+  height: 0;
+}
+
 #details .main_details {
   float: right;
-  width: 290px;
+  width: 250px;
 }
 
 #details h2 {
@@ -162,6 +190,10 @@ dl {
   font-size: 0.9em;
 }
 
+#details .year_runtime {
+  color: #666;
+}
+
 #details label {
   font-weight: bold;
 }
@@ -172,13 +204,13 @@ dl {
 }
 
 #details .associated ul {
-  column-count: 2;
+  column-count: 3;
   column-gap: 0;
 
-  -moz-column-count: 2;
+  -moz-column-count: 3;
   -moz-column-gap: 0;
 
-  -webkit-column-count: 2;
+  -webkit-column-count: 3;
   -webkit-column-gap: 0;
 
   margin: 5px 0 20px 0;

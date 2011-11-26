@@ -105,6 +105,8 @@ function getMovieDetails ( $imdb_id )
     if ( empty ( $movie [ 'imdb' ][ 'photo' ] ) )
         $movie [ 'imdb' ][ 'photo' ] = './fdb_img/bg.jpg';
 
+    $snippet .= '<section class="card">';
+
     $snippet .= '<div class="img">';
     $snippet .= '  <a href="http://www.imdb.com/title/tt' . str_pad ( $movie [ 'imdb' ][ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '"
                        target="_blank">' .
@@ -117,8 +119,8 @@ function getMovieDetails ( $imdb_id )
     if ( $movie [ 'imdb' ][ 'title_orig' ] != $movie [ 'imdb' ][ 'title_deu' ] )
     $snippet .= '  <h2>' . $movie [ 'imdb' ][ 'title_deu' ] . '</h2>';
 
-    $snippet .= '  <p>' . $movie [ 'imdb' ][ 'year' ] . ', ' . $movie [ 'imdb' ][ 'runtime' ] . ' Minuten</p>';
-    $snippet .= '  <p>' . $movie [ 'imdb' ][ 'plot' ] . '</p>';
+    $snippet .= '  <p class="year_runtime">' . $movie [ 'imdb' ][ 'year' ] . ', ' . $movie [ 'imdb' ][ 'runtime' ] . ' Minuten</p>';
+    $snippet .= '  <p class="plot"><span>' . $movie [ 'imdb' ][ 'plot' ] . '</span></p>';
 
     $snippet .= '  <p>';
     foreach ( $movie [ 'imdb' ][ 'genres' ] as $genre )
@@ -133,15 +135,16 @@ function getMovieDetails ( $imdb_id )
     $snippet .= '    <dt>Sprachen:</dd><dd> ' . implode ( ', ', $movie [ 'custom' ][ 'languages' ] ) . '</dd>';
     $snippet .= '  </dl>';
 
-    $snippet .= '</section>';
+    $snippet .= '</section>'; // class="main_details"
+    $snippet .= '</section>'; // class="card"
 
     $snippet .= '<section class="associated">';
     $snippet .= '  <label>Regie</label><ul class="directors">';
 
     foreach ( $movie [ 'imdb' ][ 'director' ] as $director )
     {
-        if ( directorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $director ) )
-            $snippet .= '<li><a href="#">' . $director . '</a></li>';
+        if ( $num = directorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $director ) )
+            $snippet .= '<li data-count="' . ($num+1) . '"><a href="#">' . $director . '</a></li>';
         else
             $snippet .= '<li>' . $director . '</li>';
     }
@@ -150,11 +153,14 @@ function getMovieDetails ( $imdb_id )
 
     $snippet .= '  <label>Cast</label><ul class="actors">';
 
-    $actnum = 0;
+    $actnum = $actshown = 0;
     foreach ( $movie [ 'imdb' ][ 'cast' ] as $actor )
     {
-        if ( actorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $actor ) )
-            $snippet .= '<li><a href="#">' . $actor . '</a></li>';
+        if ( $actshown < 40 && $num = actorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $actor ) )
+        {
+            $snippet .= '<li data-count="' . ($num+1) . '"><a href="#">' . $actor . '</a></li>';
+            $actshown++;
+        }
         elseif ( $actnum < 5 )
             $snippet .= '<li>' . $actor . '</li>';
 
