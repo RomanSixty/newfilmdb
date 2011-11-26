@@ -15,6 +15,7 @@ Requirements (contained in this repository):
 
 Other requirements (not contained):
 
+  * PECL::mongo (MongoDB database driver)
   * PECL::intl (for correct utf82ascii-transliterations)
 
 - LX
