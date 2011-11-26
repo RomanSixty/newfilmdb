@@ -102,6 +102,9 @@ function getMovieDetails ( $imdb_id )
 
     $snippet  = '<header><h1>' . $movie [ 'imdb' ][ 'title_orig' ] . '</h1></header>';
 
+    if ( isAdmin() )
+        $snippet .= '<a href="#" class="editlink" data-imdbid="' . $movie [ 'imdb' ][ 'imdb_id' ] . '"><img src="./fdb_img/edit.png" alt="edit"/></a>';
+
     if ( empty ( $movie [ 'imdb' ][ 'photo' ] ) )
         $movie [ 'imdb' ][ 'photo' ] = './fdb_img/bg.jpg';
 
@@ -184,6 +187,75 @@ function getMovieDetails ( $imdb_id )
     $snippet .= '</section>';
 
     $snippet .= '<!-- ' . print_r($movie, true) . ' -->';
+
+    return $snippet;
+}
+
+function getEditForm ( $imdb_id )
+{
+    $movie = getSingleMovie ( $imdb_id );
+
+    $snippet  = '<form method="POST" action="./" id="edit_movie">';
+
+    $snippet .= '<input type="hidden" name="act" value="save_movie" />';
+    $snippet .= '<input type="hidden" name="imdb_id" value="' . $movie [ 'imdb' ][ 'imdb_id' ] . '" />';
+
+    // Sprache
+
+    $snippet .= '<fieldset>';
+    $snippet .= '<legend><label>Sprache:</label></legend>';
+
+    $languages = array ( 'deu' => 'deutsch',
+                         'eng' => 'englisch',
+                         'OmU' => 'Untertitel' );
+
+    foreach ( $languages as $lang => $label )
+    {
+        $checked = ( in_array ( $lang, $movie [ 'custom' ][ 'languages' ] ) )
+                 ? ' checked="checked"'
+                 : '';
+
+        $snippet .= '<input type="checkbox" id="' . $lang . '" name="custom[languages][]" value="' . $lang . '"' . $checked . '/>';
+        $snippet .= '<label for="' . $lang . '">' . $label . '</label>';
+    }
+
+    $snippet .= '</fieldset>';
+
+    // Wertung
+
+    $snippet .= '<fieldset>';
+    $snippet .= '<legend><label>Wertung:</label></legend>';
+
+    foreach ( array ( 0,1,2,3,4,5,6,7,8,9 ) as $rating )
+    {
+        $checked = ( $movie [ 'custom' ][ 'rating' ] == $rating )
+                 ? ' checked="checked"'
+                 : '';
+
+        $snippet .= '<input type="radio" id="r' . $rating . '" name="custom[rating]" value="' . $rating . '"' . $checked . '/>';
+        $snippet .= '<label for="r' . $rating . '">' . $rating . '</label>';
+    }
+
+    $snippet .= '</fieldset>';
+
+    // Bemerkungen
+
+    $snippet .= '<fieldset>';
+    $snippet .= '<legend><label for="notes">Bemerkungen:</label></legend>';
+    $snippet .= '<textarea id="notes" name="custom[notes]">' . $movie [ 'custom' ][ 'notes' ] . '</textarea>';
+    $snippet .= '</fieldset>';
+
+    // Qualität
+
+    $snippet .= '<fieldset>';
+    $snippet .= '<legend><label for="quality">Qualität:</label></legend>';
+    $snippet .= '<textarea id="quality" name="custom[quality]">' . $movie [ 'custom' ][ 'quality' ] . '</textarea>';
+    $snippet .= '</fieldset>';
+
+    $snippet .= '<input type="button" class="button abort" value="abbrechen" />';
+    $snippet .= '<input type="submit" class="button submit" value="speichern" />';
+
+    $snippet .= '</form>';
 
     return $snippet;
 }

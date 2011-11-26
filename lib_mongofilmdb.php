@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * darf der Nutzer editieren?
+ *
+ * @todo konfigurierbar machen
+ * @return Boolean
+ */
+function isAdmin()
+{
+    return ( $_SERVER [ 'REMOTE_ADDR' ] == '192.168.0.2' );
+}
+
+/**
  * dieses Skript stellt Funktionen zur Verfügung,
  * um die MongoDB abzufragen
  */
@@ -109,6 +120,8 @@ function getFilters ( $form )
  */
 function insertMovie ( $movie )
 {
+    if ( !isAdmin() ) return;
+
     global $collection;
 
     updateFulltext ( $movie );
@@ -120,16 +133,18 @@ function insertMovie ( $movie )
  * Filmdaten aktualisieren (noch nicht eingesetzt)
  *
  * @param Integer $imdb_id IMDb-ID
- * @param Array $movie zu aktualisierende Filmdaten
+ * @param Array $custom zu aktualisierende Filmdaten
  */
-function updateMovie ( $imdb_id, $movie )
+function updateMovie ( $imdb_id, $custom )
 {
+    if ( !isAdmin() ) return;
+
     global $collection;
 
     updateFulltext ( $movie );
 
     $collection -> update ( array ( 'imdb.imdb_id' => intval ( $imdb_id ) ),
-                            $movie );
+                            array ( '$set' => $custom ) );
 }
 
 /**

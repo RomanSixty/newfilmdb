@@ -26,11 +26,26 @@ function rpc_filter ( $p )
     return $html;
 }
 
+function save_movie ( $form )
+{
+    $imdb_id = intval ( $form [ 'imdb_id' ] );
+
+    if ( !empty ( $imdb_id ) )
+        updateMovie ( $imdb_id, array ( 'custom' => $form [ 'custom' ] ) );
+}
+
 switch ( $_REQUEST [ 'act' ] )
 {
+    case 'save_movie':
+        save_movie ( $_REQUEST );
+        // ja, kein break...
+
     case 'details':
         $html = getMovieDetails ( $_REQUEST [ 'imdb_id' ] );
+        break;
 
+    case 'edit':
+        $html = getEditForm ( $_REQUEST [ 'imdb_id' ] );
         break;
 
     default:

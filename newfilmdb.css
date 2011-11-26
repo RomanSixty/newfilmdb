@@ -158,6 +158,13 @@ li[data-count]:after {
 #details header h1 {
   font-size: 1.8em;
   margin-bottom: 20px;
+  padding-right: 60px;
+}
+
+#details .editlink {
+  position: absolute;
+  right: 20px;
+  top: 10px;
 }
 
 #details .card {
@@ -251,4 +258,56 @@ li[data-count]:after {
 
 #details span.genre:last-child:after {
   content: '';
+}
+
+/* Bearbeitungsformular */
+
+#edit_movie fieldset {
+  margin: 20px;
+}
+
+#edit_movie label {
+  margin: 0 15px 0 5px;
+  font-weight: normal;
+}
+
+#edit_movie legend {
+  margin-bottom: 6px;
+}
+
+#edit_movie legend label {
+  font-weight: bold;
+  margin: 0;
+}
+
+#edit_movie textarea {
+  width: 100%;
+}
+
+#edit_movie .button {
+  font-size: 0.9em;
+  padding: 7px 20px;
+  border-radius: 10px;
+  box-shadow: inset -10px -10px 20px -10px rgba(0,0,0,0.6);
+  cursor: pointer;
+  margin: 20px;
+}
+
+#edit_movie .submit {
+  background: #136CB2;
+  color: #fff;
+  text-shadow: 1px 1px #333;
+  float: right;
+}
+
+#edit_movie .abort {
+  background: #d0d0d0;
+  text-shadow: 1px 1px #fff;
+}
+
+#edit_movie .button:hover {
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  transform: scale(1.2);
 }

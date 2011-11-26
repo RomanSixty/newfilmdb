@@ -39,6 +39,22 @@ function initContent()
     });
 }
 
+function initForm()
+{
+    $('#edit_movie').submit(function(){
+        $.ajax({
+            url: 'rpc.php',
+            dataType: 'html',
+            data: $('#edit_movie').serialize(),
+            success: function(data) {
+                $('#details').html(data);
+                initDetails();
+            }
+        });
+        return false;
+    });
+}
+
 function initDetails()
 {
     $('#details .genre a').click(function(){
@@ -85,6 +101,20 @@ function initDetails()
 
         $('#fulltext').val('');
         $('#searchform').submit();
+    });
+
+    $('#details .editlink').click(function(){
+        var imdb_id = $(this).attr('data-imdbid');
+
+        $.ajax({
+            url: 'rpc.php',
+            dataType: 'html',
+            data: 'act=edit&imdb_id=' + imdb_id,
+            success: function(data) {
+                $('#details .associated').html(data);
+                initForm();
+            }
+        });
     });
 }
 
