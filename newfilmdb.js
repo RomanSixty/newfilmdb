@@ -96,9 +96,13 @@ function initDetails()
         $('#searchform').submit();
     });
 
-    $('#details ul.directors a').click(function(){
-        $('#dir').remove();
-        $('label[for=dir]').remove();
+    $('#details ul.directors a').click(function(e){
+        if ( !e.shiftKey )
+        {
+            $('#dashboard .act_filter').remove();
+            $('#dir').remove();
+            $('label[for=dir]').remove();
+        }
 
         html  = '<input id="dir" type="hidden" name="director[]" value="' + $(this).html() + '" />';
         html += '<label class="filter" for="dir">' + $(this).html() + '</label>';
@@ -108,21 +112,32 @@ function initDetails()
 
         $('#fulltext').val('');
         $('#searchform').submit();
+
+        return false;
     });
 
-    $('#details ul.actors a').click(function(){
+    $('#details ul.actors a').click(function(e){
+        if ( !e.shiftKey )
+        {
+            $('#dashboard .act_filter').remove();
+            $('#dir').remove();
+            $('label[for=dir]').remove();
+        }
+
         timest = +new Date();
 
         filterid = 'act' + timest;
 
-        html  = '<input id="' + filterid + '" type="hidden" name="cast[]" value="' + $(this).html() + '" />';
-        html += '<label class="filter" for="' + filterid + '">' + $(this).html() + '</label>';
+        html  = '<input class="act_filter" id="' + filterid + '" type="hidden" name="cast[]" value="' + $(this).html() + '" />';
+        html += '<label class="filter act_filter" for="' + filterid + '">' + $(this).html() + '</label>';
 
         $('label[id=cast]').after(html);
         initFilter ( filterid );
 
         $('#fulltext').val('');
         $('#searchform').submit();
+
+        return false;
     });
 
     $('#details .editlink').click(function(){
