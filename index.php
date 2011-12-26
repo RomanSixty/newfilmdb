@@ -14,7 +14,7 @@ require ( 'lib_html.php' );
 
 echo getDashboard();
 
-$movies = getMovieList ( getFilters ( $_POST ) );
+$movies = getMovieList();
 
 echo '<section id="list">';
 foreach ( $movies as $movie )

@@ -23,13 +23,15 @@ $collection = $db -> movie;
 /**
  * Liste von Filmen
  *
- * @param Array $filter MongoDB-Filterkriterien
  * @return Array Filme
  * @todo Sortierungsmöglichkeiten
  */
-function getMovieList ( $filter = array() )
+function getMovieList()
 {
     global $collection;
+
+    $filter = getFilters ( $_REQUEST );
+    $order  = getOrder   ( $filter );
 
     $result = $collection -> find (
         $filter,
@@ -39,7 +41,7 @@ function getMovieList ( $filter = array() )
             'imdb.photo'       => 1,
             'custom.rating'    => 1
         )
-    );
+    ) -> sort ( $order );
 
     // Struktur verflachen
     $movies = array();
@@ -54,7 +56,8 @@ function getMovieList ( $filter = array() )
         );
     }
 
-    shuffle ( $movies );
+    if ( empty ( $order ) )
+        shuffle ( $movies );
 
     return $movies;
 }
@@ -114,6 +117,21 @@ function getFilters ( $form )
 }
 
 /**
+ * MongoDB-Sortierung basierend auf gesetztem Filter
+ *
+ * @param Array $filter Filter wie aus getFilters()
+ * @return Array Sortiereinstellung
+ */
+function getOrder ( $filter )
+{
+    if (    !empty ( $filter [ 'imdb.director' ] )
+         || !empty ( $filter [ 'imdb.cast'     ] ) )
+        return array ( 'imdb.year' => 1 );
+
+    return array();
+}
+
+/**
  * fertige Filmdaten in die Datenbank schreiben
  *
  * @param Array $movie Filmdaten
@@ -141,10 +159,18 @@ function updateMovie ( $imdb_id, $custom )
 
     global $collection;
 
+    $imdb_id = intval ( $imdb_id );
+
+    $collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
+                            array ( '$set' => $custom ) );
+
+    // Volltextindex aktualisieren
+    $movie = getSingleMovie ( $imdb_id );
+
     updateFulltext ( $movie );
 
-    $collection -> update ( array ( 'imdb.imdb_id' => intval ( $imdb_id ) ),
-                            array ( '$set' => $custom ) );
+    $collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
+                            array ( '$set' => array ( 'fulltext' => $movie [ 'fulltext' ] ) ) );
 }
 
 /**
@@ -159,7 +185,8 @@ function updateFulltext ( &$movie )
     $fulltext = $movie [ 'imdb' ][ 'title_orig' ] . ' '
               . $movie [ 'imdb' ][ 'title_deu'  ] . ' '
               . implode ( ' ', $movie [ 'imdb' ][ 'director' ] ) . ' '
-              . implode ( ' ', $movie [ 'imdb' ][ 'cast'     ] );
+              . implode ( ' ', $movie [ 'imdb' ][ 'cast'     ] ) . ' '
+              . $movie [ 'custom' ][ 'notes' ];
 
     $fulltext = _transliterate ( $fulltext );
 

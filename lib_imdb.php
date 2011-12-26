@@ -49,7 +49,7 @@ function getMovie ( $imdb_id )
             'title_orig' => _charsetPrepare ( $movie->title() ),
             'title_deu'  => _charsetPrepare ( $title_deu ),
             'year'       => $movie->year(),
-            'runtime'    => $movie->runtime(),
+            'runtime'    => intval ( $movie->runtime() ),
             'rating'     => $movie->rating(),
             'genres'     => $movie->genres(),
             'director'   => $directors,
