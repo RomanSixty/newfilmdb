@@ -94,7 +94,10 @@ function getFilters ( $form )
     {
         $terms = explode ( ' ', _transliterate ( $form [ 'fulltext' ] ) );
 
-        $filter [ 'fulltext' ] = array ( '$all' => $terms );
+        foreach ( $terms as $term )
+            $regex[] = new MongoRegex ( '/' . $term . '.*/i' );
+
+        $filter [ 'fulltext' ] = array ( '$all' => $regex );
     }
 
     // Sprachfilter (ODER)
