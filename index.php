@@ -13,9 +13,9 @@ require ( 'lib_imdb.php' );
 require ( 'lib_mongofilmdb.php' );
 require ( 'lib_html.php' );
 
-echo getDashboard();
-
 $movies = getMovieList();
+
+echo getDashboard ( count ( $movies ) );
 
 echo '<section id="list">';
 foreach ( $movies as $movie )

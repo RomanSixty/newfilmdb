@@ -131,11 +131,16 @@ li[data-count]:after {
   text-shadow: 1px 1px #444;
 }
 
-#dashboard section.filter {
+#dashboard section.filter,
+#dashboard section.counter {
   float: left;
   padding: 5px 20px;
   border-left: 1px solid rgba(70,70,70,0.8);
   border-right: 1px solid rgba(50,50,50,0.8);
+}
+
+#dashboard section.counter {
+	float: right;
 }
 
 #dashboard label.filter,

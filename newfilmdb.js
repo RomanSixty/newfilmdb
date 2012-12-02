@@ -3,10 +3,11 @@ function initDashbar()
     $('#searchform').submit(function(){
         $.ajax({
             url: 'rpc.php',
-            dataType: 'html',
+            dataType: 'json',
             data: $('#searchform').serialize(),
             success: function(data) {
-                $('#list').html(data);
+                $('#list').html(data.html);
+                $('#num_results').html(data.count);
                 initContent();
             }
         });

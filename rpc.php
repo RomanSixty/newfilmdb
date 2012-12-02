@@ -24,7 +24,8 @@ function rpc_filter ( $p )
     foreach ( $movies as $movie )
         $html .= getMovieSnippet ( $movie );
 
-    return $html;
+    return array ( 'count' => count ( $movies ),
+                   'html'  => $html );
 }
 
 switch ( $_REQUEST [ 'act' ] )
@@ -35,7 +36,7 @@ switch ( $_REQUEST [ 'act' ] )
         if (    empty ( $imdb_id )
              || empty ( $_REQUEST [ 'custom' ][ 'languages' ] ) )
         {
-            $html = getEditForm();
+            $return = getEditForm();
             break;
         }
         else
@@ -53,26 +54,30 @@ switch ( $_REQUEST [ 'act' ] )
         // kein break...
 
     case 'details':
-        $html = getMovieDetails ( $_REQUEST [ 'imdb_id' ] );
+        $return = getMovieDetails ( $_REQUEST [ 'imdb_id' ] );
         break;
 
     case 'add':
-        $html = getEditForm ( $_REQUEST [ 'imdb_id' ], false );
+        $return = getEditForm ( $_REQUEST [ 'imdb_id' ], false );
         break;
 
     case 'edit':
-        $html = getEditForm ( $_REQUEST [ 'imdb_id' ], true );
+        $return = getEditForm ( $_REQUEST [ 'imdb_id' ], true );
         break;
 
     default:
-        $html = rpc_filter ( $_REQUEST );
+        $return = rpc_filter ( $_REQUEST );
         break;
 }
 
-if ( !empty ( $html ) )
+if ( !empty ( $return ) )
 {
     header ( 'Content-Encoding: deflate' );
-    echo substr ( gzcompress ( $html ), 2 );
+
+    if ( is_array ( $return ) )
+        echo substr ( gzcompress ( json_encode ( $return ) ), 2 );
+    else
+        echo substr ( gzcompress ( $return ), 2 );
 }
 
 ?>

@@ -9,9 +9,10 @@
 /**
  * HTML-Code für das Dashboard im Seitenkopf mit Suchfiltern
  *
+ * @param Integer $count Anzahl der ausgegebenen Filme
  * @return String HTML-Code
  */
-function getDashboard()
+function getDashboard ( $count = 0 )
 {
     $snippet  = '<section id="dashboard">';
     $snippet .= '<form method="POST" action="./" id="searchform">';
@@ -61,6 +62,9 @@ function getDashboard()
     $snippet .= '</section>';
 
     $snippet .= '</form>';
+
+    $snippet .= '<section class="counter"><span id="num_results">'.$count.'</span> Ergebnisse</section>';
+
     $snippet .= '</section>';
 
     return $snippet;

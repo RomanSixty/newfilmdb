@@ -127,9 +127,9 @@ function getFilters ( $form )
  */
 function getOrder ( $filter )
 {
-    if (    !empty ( $filter [ 'imdb.director' ] )
-         || !empty ( $filter [ 'imdb.cast'     ] ) )
-        return array ( 'imdb.year' => 1 );
+    #if (    !empty ( $filter [ 'imdb.director' ] )
+    #     || !empty ( $filter [ 'imdb.cast'     ] ) )
+        return array ( 'imdb.title_orig' => 1 );
 
     return array();
 }
