@@ -40,6 +40,12 @@ function getDashboard()
                         checked="checked"
                         name="lang[]"
                         id="lang_deu" /> <label for="lang_deu">deu</label></span>';
+    $snippet .= '<span class="checkbutton"><input type="checkbox"
+                        class="check"
+                        value="OmU"
+                        checked="checked"
+                        name="lang[]"
+                        id="lang_omu" /> <label for="lang_omu">OmU</label></span>';
     $snippet .= '</section>';
 
     $snippet .= '<section class="filter">';
@@ -68,11 +74,17 @@ function getDashboard()
  */
 function getMovieSnippet ( $movie )
 {
+    // Bild bestimmen
+    if ( file_exists ( './images/own_' . str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '.jpg' ) )
+    	$photo = './images/own_' . str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '.jpg';
+    else
+    	$photo =& $movie [ 'photo' ];
+
     $snippet  = '<section data-imdbid="' . $movie [ 'imdb_id' ] . '"
                           class="movie">';
     $snippet .= '  <div class="img">';
     $snippet .= '    <img class="delay poster"
-                          data-original="' . $movie [ 'photo' ] . '"
+                          data-original="' . $photo . '"
                           src="./fdb_img/blank.gif"
                           alt="' . $movie [ 'title' ] . '" />';
     $snippet .= '  </div>';
@@ -100,6 +112,12 @@ function getMovieDetails ( $imdb_id )
 {
     $movie = getSingleMovie ( $imdb_id );
 
+    // Bild bestimmen
+    if ( file_exists ( './images/own_' . str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) . '.jpg' ) )
+    	$photo = './images/own_' . str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) . '.jpg';
+    else
+    	$photo =& $movie [ 'imdb' ][ 'photo' ];
+
     $snippet  = '<header><h1>' . $movie [ 'imdb' ][ 'title_orig' ] . '</h1></header>';
 
     if ( isAdmin() )
@@ -113,7 +131,7 @@ function getMovieDetails ( $imdb_id )
     $snippet .= '<div class="img">';
     $snippet .= '  <a href="http://www.imdb.com/title/tt' . str_pad ( $movie [ 'imdb' ][ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '"
                        target="_blank">' .
-                   '<img src="' . $movie [ 'imdb' ][ 'photo' ] . '"
+                   '<img src="' . $photo . '"
                          alt="" />' .
                    '</a>';
     $snippet .= '</div>';
@@ -178,18 +196,16 @@ function getMovieDetails ( $imdb_id )
         $snippet .= '  <label>Anmerkungen</label>';
 
         if ( !empty ( $movie [ 'custom' ][ 'notes' ] ) )
-        $snippet .= '  <p>' . $movie [ 'custom' ][ 'notes' ] . '</p>';
+        $snippet .= '  <p>' . nl2br ( $movie [ 'custom' ][ 'notes' ] ) . '</p>';
 
         if ( !empty ( $movie [ 'custom' ][ 'quality' ] ) )
-        $snippet .= '  <dl><dt>Qualität</dt><dd>' . $movie [ 'custom' ][ 'quality' ] . '</dd></dl>';
+        $snippet .= '  <dl><dt>Qualität</dt><dd>' . nl2br ( $movie [ 'custom' ][ 'quality' ] ) . '</dd></dl>';
     }
 
     if ( isAdmin() )
         $snippet .= '<a href="#" class="addlink" data-imdbid="' . $movie [ 'imdb' ][ 'imdb_id' ] . '"><img src="./fdb_img/add.png" alt="add"/></a>';
 
     $snippet .= '</section>';
-
-    $snippet .= '<!-- ' . print_r($movie, true) . ' -->';
 
     return $snippet;
 }
