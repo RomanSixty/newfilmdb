@@ -152,6 +152,8 @@ function initDetails()
                 initForm();
             }
         });
+
+        return false;
     });
 
     $('#details .addlink').click(function(){
@@ -166,6 +168,8 @@ function initDetails()
                 initForm();
             }
         });
+
+        return false;
     });
 }
 
