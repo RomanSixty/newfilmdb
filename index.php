@@ -3,8 +3,9 @@
   <head>
     <title>LX' Filmdb</title>
     <meta charset="utf-8"/>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lusitana:400,700" type="text/css"/>
+    <link rel="stylesheet" href="./newfilmdb.css" type="text/css"/>
   </head>
-  <link rel="stylesheet" href="./newfilmdb.css"/>
   <body>
 <?php
 

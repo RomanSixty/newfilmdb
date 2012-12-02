@@ -3,7 +3,7 @@
   padding: 0;
   margin: 0;
   font-size: 1em;
-  font-family: Tahoma, Verdana, sans-serif;
+  font-family: "Lusitana", Tahoma, Verdana, sans-serif;
 }
 
 body {
@@ -18,7 +18,8 @@ a:visited {
 }
 
 h1, h2 {
-  font-family: Times, serif;
+  font-family: "Lusitana", Times, serif;
+  font-variant: small-caps;
 }
 
 ul, li {
@@ -93,6 +94,11 @@ li[data-count]:after {
   color: #fff;
   padding: 3px 7px;
   z-index: 5;
+  display: none
+}
+
+#list .movie:hover .meta {
+  display: block;
 }
 
 #list .movie p {
