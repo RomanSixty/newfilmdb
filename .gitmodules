@@ -1,0 +1,3 @@
+[submodule "imdbphp"]
+	path = imdbphp
+	url = git@github.com:RomanSixty/imdbphp2.git

@@ -5,8 +5,8 @@
  * aus IMDBPHP die Filmdaten geladen und strukturiert werden
  */
 
-require("imdbapi/imdb.class.php");
-chdir ( 'imdbapi' );
+require("imdbphp/imdb.class.php");
+chdir ( 'imdbphp' );
 
 /**
  * holt zu einer IMDB-ID alle gewünschten Filmdaten
