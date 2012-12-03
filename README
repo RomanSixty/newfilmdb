@@ -16,8 +16,8 @@ Requirements (contained in this repository):
 
 Other requirements (not contained):
 
-  * IMDBPHP (http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper,
-    must be installed in subfolder "imdbapi/"
+  * IMDBPHP2 (http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper,
+    configured as submodule in directory "imdbphp/"
   * PECL::mongo (MongoDB database driver)
   * PECL::intl (for correct utf82ascii-transliterations)
 
