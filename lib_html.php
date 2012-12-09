@@ -7,6 +7,65 @@
  */
 
 /**
+ * Platzhalter im Template ersetzen
+ *
+ * @param String $template HTML-Schnipsel
+ * @param Array $replacements Platzhalter => Wert
+ * @return String HTML-Schnipsel
+ */
+function templateReplacements ( $template, $replacements )
+{
+	foreach ( $replacements as $key => $val )
+	{
+		if ( is_array ( $val ) )
+		{
+			preg_match ( '~({{{LOOP_'.$key.'(.*%%%'.$key.'%%%.*)}}})~sU', $template, $matches );
+
+			if ( count ( $matches ) )
+			{
+				$rep = '';
+
+				foreach ( $val as $value )
+					$rep .= str_replace ( '%%%' . $key . '%%%', $value, $matches [ 2 ] );
+
+				$template = str_replace ( $matches [ 1 ], $rep, $template );
+			}
+			else
+				$template = str_replace ( $matches [ 1 ], '', $template );
+		}
+		else
+		{
+			$template = str_replace ( '%%%'.$key.'%%%', $val,   $template );
+
+			// Bedingungen
+			if ( empty ( $val ) )
+			{
+				$template = preg_replace ( '~<!-- !!!'.$key.'_START!!! -->.*<!-- !!!'.$key.'_END!!! -->~sU', '', $template );
+			}
+		}
+	}
+
+	return $template;
+}
+
+/**
+ * benutzerspezifisches Bild zurückgeben, wenn vorhanden
+ * sonst das Bild aus der IMDb
+ *
+ * @param Array $movie Filmdaten
+ * @return String Bildpfad
+ */
+function getBestImage ( $movie )
+{
+	if ( file_exists ( $photo = './images/own_' . str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '.jpg' ) )
+    	return $photo;
+    elseif ( !empty ( $movie [ 'photo' ] ) )
+    	return $movie [ 'photo' ];
+    else
+    	return './fdb_img/bg.jpg';
+}
+
+/**
  * HTML-Code für das Dashboard im Seitenkopf mit Suchfiltern
  *
  * @param Integer $count Anzahl der ausgegebenen Filme
@@ -14,60 +73,11 @@
  */
 function getDashboard ( $count = 0 )
 {
-    $snippet  = '<section id="dashboard">';
-    $snippet .= '<form method="POST" action="./" id="searchform">';
+	$template = file_get_contents ( dirname ( __FILE__ ) . '/templates/dashboard.html' );
 
-    // Volltextsuche
-    $snippet .= '<section class="filter">';
-    $snippet .= '<label for="fulltext" class="section">Suche:</label>';
-    $snippet .= '<input type="text"
-                        value=""
-                        name="fulltext"
-                        id="fulltext" />';
-    $snippet .= '</section>';
+	$replacements = array ( 'COUNT' => $count );
 
-    // Sprachfilter
-    $snippet .= '<section class="filter">';
-    $snippet .= '<label class="section">Sprache:</label>';
-    $snippet .= '<span class="checkbutton"><input type="checkbox"
-                        class="check"
-                        value="eng"
-                        checked="checked"
-                        name="lang[]"
-                        id="lang_eng" /> <label for="lang_eng">eng</label></span>';
-    $snippet .= '<span class="checkbutton"><input type="checkbox"
-                        class="check"
-                        value="deu"
-                        checked="checked"
-                        name="lang[]"
-                        id="lang_deu" /> <label for="lang_deu">deu</label></span>';
-    $snippet .= '<span class="checkbutton"><input type="checkbox"
-                        class="check"
-                        value="OmU"
-                        checked="checked"
-                        name="lang[]"
-                        id="lang_omu" /> <label for="lang_omu">OmU</label></span>';
-    $snippet .= '</section>';
-
-    $snippet .= '<section class="filter">';
-    $snippet .= '<label id="genre" class="section">Genre:</label>';
-    $snippet .= '</section>';
-
-    $snippet .= '<section class="filter">';
-    $snippet .= '<label id="director" class="section">Regie:</label>';
-    $snippet .= '</section>';
-
-    $snippet .= '<section class="filter">';
-    $snippet .= '<label id="cast" class="section">Cast:</label>';
-    $snippet .= '</section>';
-
-    $snippet .= '</form>';
-
-    $snippet .= '<section class="counter"><span id="num_results">'.$count.'</span> Ergebnisse</section>';
-
-    $snippet .= '</section>';
-
-    return $snippet;
+    return templateReplacements ( $template, $replacements );
 }
 
 /**
@@ -78,32 +88,19 @@ function getDashboard ( $count = 0 )
  */
 function getMovieSnippet ( $movie )
 {
-    // Bild bestimmen
-    if ( file_exists ( './images/own_' . str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '.jpg' ) )
-    	$photo = './images/own_' . str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '.jpg';
-    else
-    	$photo =& $movie [ 'photo' ];
+	$template = file_get_contents ( dirname ( __FILE__ ) . '/templates/movie_snippet.html' );
 
-    $snippet  = '<section data-imdbid="' . $movie [ 'imdb_id' ] . '"
-                          class="movie">';
-    $snippet .= '  <div class="img">';
-    $snippet .= '    <img class="delay poster"
-                          data-original="' . $photo . '"
-                          src="./fdb_img/blank.gif"
-                          alt="' . $movie [ 'title' ] . '" />';
-    $snippet .= '  </div>';
-    $snippet .= '  <section class="meta">';
-    $snippet .= '    <h1>' . $movie [ 'title' ] . '</h1></header>';
+	$replacements = $movie;
 
-    if ( $movie [ 'rating' ] > 0 )
-        $snippet .= '    <p>' . $movie [ 'rating' ] . '/10</p>';
-    else
-        $snippet .= '    <p>noch keine Wertung</p>';
+    $replacements [ 'PHOTO' ] = getBestImage ( $movie );
 
-    $snippet .= '  </section>';
-    $snippet .= '</section>';
+    // Rating bestimmen
+	if ( $movie [ 'rating' ] > 0 )
+		$replacements [ 'RATING' ] = $movie [ 'rating' ].'/10';
+	else
+		$replacements [ 'RATING' ] = 'noch keine Wertung';
 
-    return $snippet;
+    return templateReplacements ( $template, $replacements );
 }
 
 /**
@@ -114,104 +111,57 @@ function getMovieSnippet ( $movie )
  */
 function getMovieDetails ( $imdb_id )
 {
-    $movie = getSingleMovie ( $imdb_id );
+	$template = file_get_contents ( dirname ( __FILE__ ) . '/templates/movie_details.html' );
 
-    // Bild bestimmen
-    if ( file_exists ( './images/own_' . str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) . '.jpg' ) )
-    	$photo = './images/own_' . str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) . '.jpg';
-    else
-    	$photo =& $movie [ 'imdb' ][ 'photo' ];
+	$movie = getSingleMovie ( $imdb_id );
 
-    $snippet  = '<header><h1>' . $movie [ 'imdb' ][ 'title_orig' ] . '</h1></header>';
+	$replacements = $movie [ 'imdb' ];
 
-    if ( isAdmin() )
-        $snippet .= '<a href="#" class="editlink" data-imdbid="' . $movie [ 'imdb' ][ 'imdb_id' ] . '"><img src="./fdb_img/edit.png" alt="edit"/></a>';
+	foreach ( $movie [ 'custom' ] as $key => $val )
+	{
+		if ( is_array ( $val ) )
+			$replacements [ 'custom_'.$key ] = $val;
+		else
+			$replacements [ 'custom_'.$key ] = nl2br ( $val );
+	}
 
-    if ( empty ( $movie [ 'imdb' ][ 'photo' ] ) )
-        $movie [ 'imdb' ][ 'photo' ] = './fdb_img/bg.jpg';
+	$replacements [ 'IS_ADMIN'      ] = isAdmin();
+	$replacements [ 'PHOTO'         ] = getBestImage ( $movie [ 'imdb' ] );
+	$replacements [ 'IMDBID_PADDED' ] = str_pad ( $movie [ 'imdb' ][ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
+	$replacements [ 'TITLE_DIFF'    ] = ( $movie [ 'imdb' ][ 'title_orig' ] != $movie [ 'imdb' ][ 'title_deu' ] );
 
-    $snippet .= '<section class="card">';
+	if (    empty ( $movie [ 'custom' ][ 'notes'   ] )
+         && empty ( $movie [ 'custom' ][ 'quality' ] ) )
+		$replacements [ 'NOTES_QUALITY' ] = false;
 
-    $snippet .= '<div class="img">';
-    $snippet .= '  <a href="http://www.imdb.com/title/tt' . str_pad ( $movie [ 'imdb' ][ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '"
-                       target="_blank">' .
-                   '<img src="' . $photo . '"
-                         alt="" />' .
-                   '</a>';
-    $snippet .= '</div>';
-
-    $snippet .= '<section class="main_details">';
-    if ( $movie [ 'imdb' ][ 'title_orig' ] != $movie [ 'imdb' ][ 'title_deu' ] )
-    $snippet .= '  <h2>' . $movie [ 'imdb' ][ 'title_deu' ] . '</h2>';
-
-    $snippet .= '  <p class="year_runtime">' . $movie [ 'imdb' ][ 'year' ] . ', ' . $movie [ 'imdb' ][ 'runtime' ] . ' Minuten</p>';
-    $snippet .= '  <p class="plot"><span>' . $movie [ 'imdb' ][ 'plot' ] . '</span></p>';
-
-    $snippet .= '  <p>';
-    foreach ( $movie [ 'imdb' ][ 'genres' ] as $genre )
-        $snippet .= '<span class="genre"><a href="#">' . $genre . '</a></span>';
-    $snippet .= '  </p>';
-
-    $snippet .= '    <div class="star">' . $movie [ 'imdb'   ][ 'rating' ] . '</div>';
-    if ( $movie [ 'custom' ][ 'rating' ] > 0 )
-    $snippet .= '    <div class="star">' . $movie [ 'custom' ][ 'rating' ] . '</div>';
-
-    $snippet .= '  <dl>';
-    $snippet .= '    <dt>Sprachen:</dd><dd> ' . implode ( ', ', $movie [ 'custom' ][ 'languages' ] ) . '</dd>';
-    $snippet .= '  </dl>';
-
-    $snippet .= '</section>'; // class="main_details"
-    $snippet .= '</section>'; // class="card"
-
-    $snippet .= '<section class="associated">';
-    $snippet .= '  <label>Regie</label><ul class="directors">';
-
+	$directors = '';
     foreach ( $movie [ 'imdb' ][ 'director' ] as $director )
     {
         if ( $num = directorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $director ) )
-            $snippet .= '<li data-count="' . ($num+1) . '"><a href="#">' . $director . '</a></li>';
+            $directors .= '<li data-count="' . ($num+1) . '"><a href="#">' . $director . '</a></li>';
         else
-            $snippet .= '<li>' . $director . '</li>';
+            $directors .= '<li>' . $director . '</li>';
     }
+    $replacements [ 'DIRECTORS' ] = $directors;
 
-    $snippet .= '  </ul>';
-
-    $snippet .= '  <label>Cast</label><ul class="actors">';
 
     $actnum = $actshown = 0;
+    $actors = '';
     foreach ( $movie [ 'imdb' ][ 'cast' ] as $actor )
     {
         if ( $actshown < 40 && $num = actorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $actor ) )
         {
-            $snippet .= '<li data-count="' . ($num+1) . '"><a href="#">' . $actor . '</a></li>';
+            $actors .= '<li data-count="' . ($num+1) . '"><a href="#">' . $actor . '</a></li>';
             $actshown++;
         }
         elseif ( $actnum < 5 )
-            $snippet .= '<li>' . $actor . '</li>';
+            $actors .= '<li>' . $actor . '</li>';
 
         $actnum++;
     }
+    $replacements [ 'ACTORS' ] = $actors;
 
-    $snippet .= '  </ul>';
-
-    if (    !empty ( $movie [ 'custom' ][ 'notes'   ] )
-         || !empty ( $movie [ 'custom' ][ 'quality' ] ) )
-    {
-        $snippet .= '  <label>Anmerkungen</label>';
-
-        if ( !empty ( $movie [ 'custom' ][ 'notes' ] ) )
-        $snippet .= '  <p>' . nl2br ( $movie [ 'custom' ][ 'notes' ] ) . '</p>';
-
-        if ( !empty ( $movie [ 'custom' ][ 'quality' ] ) )
-        $snippet .= '  <dl><dt>Qualität</dt><dd>' . nl2br ( $movie [ 'custom' ][ 'quality' ] ) . '</dd></dl>';
-    }
-
-    if ( isAdmin() )
-        $snippet .= '<a href="#" class="addlink" data-imdbid="' . $movie [ 'imdb' ][ 'imdb_id' ] . '"><img src="./fdb_img/add.png" alt="add"/></a>';
-
-    $snippet .= '</section>';
-
-    return $snippet;
+    return templateReplacements ( $template, $replacements );
 }
 
 /**

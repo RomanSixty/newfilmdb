@@ -192,6 +192,7 @@ li[data-count]:after {
   border-radius: 10px;
   position: relative;
   box-shadow: 2px 2px 5px #bbb;
+  background: #fafafa;
 }
 
 #details .card:after {
@@ -272,11 +273,11 @@ li[data-count]:after {
   width: 66px;
 }
 
-#details span.genre:after {
+#details span.csv:after {
   content: ', ';
 }
 
-#details span.genre:last-child:after {
+#details span.csv:last-child:after {
   content: '';
 }
 

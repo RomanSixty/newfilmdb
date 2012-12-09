@@ -1,0 +1,73 @@
+<header>
+	<h1>%%%title_orig%%%</h1>
+</header>
+
+<!-- !!!IS_ADMIN_START!!! -->
+<a href="#" class="editlink" data-imdbid="%%%imdb_id%%%"><img src="./fdb_img/edit.png" alt="edit"/></a>
+<!-- !!!IS_ADMIN_END!!! -->
+
+<section class="card">
+
+	<div class="img">
+		<a href="http://www.imdb.com/title/tt%%%IMDBID_PADDED%%%"
+		    target="_blank"><img src="%%%PHOTO%%%" alt="%%%title_orig%%%" /></a>
+	</div>
+
+	<section class="main_details">
+    	<!-- !!!TITLE_DIFF_START!!! -->
+		<h2>%%%title_deu%%%</h2>
+		<!-- !!!TITLE_DIFF_END!!! -->
+
+		<p class="year_runtime">%%%year%%%, %%%runtime%%% Minuten</p>
+		<p class="plot"><span>%%%plot%%%</span></p>
+
+		<p>
+		{{{LOOP_genres
+			<span class="csv"><a href="#">%%%genres%%%</a></span>
+		}}}
+		</p>
+
+		<div class="star">%%%rating%%%</div>
+    	<!-- !!!custom_rating_START!!! -->
+		<div class="star">%%%custom_rating%%%</div>
+		<!-- !!!custom_rating_END!!! -->
+
+		<dl>
+			<dt>Sprachen:</dd>
+			<dd>{{{LOOP_custom_languages
+			<span class="csv">%%%custom_languages%%%</span>
+			}}}</dd>
+		</dl>
+
+	</section><!-- class="main_details" -->
+</section><!-- class="card" -->
+
+<section class="associated">
+	<label>Regie</label>
+	<ul class="directors">%%%DIRECTORS%%%</ul>
+
+	<!-- !!!ACTORS_START!!! -->
+	<label>Cast</label>
+	<ul class="actors">%%%ACTORS%%%</ul>
+	<!-- !!!ACTORS_END!!! -->
+
+	<!-- !!!NOTES_QUALITY_START!!! -->
+	<label>Anmerkungen</label>
+	<!-- !!!NOTES_QUALITY_END!!! -->
+
+	<!-- !!!custom_notes_START!!! -->
+	<p>%%%custom_notes%%%</p>
+	<!-- !!!custom_notes_END!!! -->
+
+	<!-- !!!custom_quality_START!!! -->
+	<dl>
+		<dt>Qualität</dt>
+		<dd>%%%custom_quality%%%</dd>
+	</dl>
+	<!-- !!!custom_quality_END!!! -->
+
+	<!-- !!!IS_ADMIN_START!!! -->
+	<a href="#" class="addlink" data-imdbid="%%%imdb_id%%%"><img src="./fdb_img/add.png" alt="add"/></a>
+	<!-- !!!IS_ADMIN_END!!! -->
+
+</section><!-- class="associated" -->

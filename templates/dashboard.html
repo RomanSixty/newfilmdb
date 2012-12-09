@@ -1,0 +1,64 @@
+<section id="dashboard">
+
+	<form method="POST" action="./" id="searchform">
+
+		<!-- full text search -->
+		<section class="filter">
+			<label for="fulltext" class="section">Suche:</label>
+			<input type="text"
+			       value=""
+			       name="fulltext"
+			       id="fulltext" />
+		</section>
+
+	    <!-- language filter -->
+	    <section class="filter">
+		    <label class="section">Sprache:</label>
+		    <span class="checkbutton">
+		    	<input type="checkbox"
+				       class="check"
+				       value="eng"
+				       checked="checked"
+				       name="lang[]"
+				       id="lang_eng" />
+		    	<label for="lang_eng">eng</label>
+		    </span>
+			<span class="checkbutton">
+				<input type="checkbox"
+				       class="check"
+				       value="deu"
+				       checked="checked"
+				       name="lang[]"
+				       id="lang_deu" />
+				<label for="lang_deu">deu</label>
+			</span>
+			<span class="checkbutton">
+				<input type="checkbox"
+				       class="check"
+				       value="OmU"
+				       checked="checked"
+				       name="lang[]"
+				       id="lang_omu" />
+				<label for="lang_omu">OmU</label>
+			</span>
+		</section>
+
+		<section class="filter">
+			<label id="genre" class="section">Genre:</label>
+		</section>
+
+		<section class="filter">
+			<label id="director" class="section">Regie:</label>
+		</section>
+
+		<section class="filter">
+			<label id="cast" class="section">Cast:</label>
+		</section>
+
+	</form>
+
+	<section class="counter">
+		<span id="num_results">%%%COUNT%%%</span> Ergebnisse
+	</section>
+
+</section>
