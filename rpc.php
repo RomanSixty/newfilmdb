@@ -79,5 +79,3 @@ if ( !empty ( $return ) )
     else
         echo substr ( gzcompress ( $return ), 2 );
 }
-
-?>

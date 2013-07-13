@@ -256,5 +256,3 @@ function actorHasOtherMovies ( $imdb_id, $actor )
 
     return $other;
 }
-
-?>

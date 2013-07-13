@@ -258,5 +258,3 @@ function getEditForm ( $imdb_id, $edit = true )
 
     return $snippet;
 }
-
-?>

@@ -86,4 +86,3 @@ function _charsetPrepare ( $string )
 
     return trim ( $string );
 }
-?>
