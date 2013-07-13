@@ -6,6 +6,7 @@
  */
 
 require ( 'lib_mongofilmdb.php' );
+require ( 'lib_bechdel.php' );
 require ( 'lib_html.php' );
 require ( 'lib_imdb.php' );
 
@@ -40,7 +41,15 @@ switch ( $_REQUEST [ 'act' ] )
             break;
         }
         else
-            insertMovie ( getMovie ( $imdb_id ) );
+		{
+			$movie = getMovie ( $imdb_id );
+
+			// Bechdel-Daten ergänzen
+			if ( false !== ( $bechdel_info = getBechdelInfo ( $imdb_id ) ) )
+				$movie [ 'bechdel' ] = $bechdel_info;
+
+            insertMovie ( $movie );
+		}
 
         // kein break...
 

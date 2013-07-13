@@ -161,6 +161,11 @@ function getMovieDetails ( $imdb_id )
     }
     $replacements [ 'ACTORS' ] = $actors;
 
+	if ( !empty ( $movie [ 'bechdel' ] ) )
+		$replacements [ 'BECHDEL' ] = getBechdelImage ( $movie [ 'bechdel' ] );
+	else
+		$replacements [ 'BECHDEL' ] = '';
+
     return templateReplacements ( $template, $replacements );
 }
 
@@ -257,4 +262,30 @@ function getEditForm ( $imdb_id, $edit = true )
     $snippet .= '</form>';
 
     return $snippet;
+}
+
+function getBechdelImage ( $bechdel_info )
+{
+	$src = 'fdb_img/bechdel/' . $bechdel_info [ 'rating' ] . $bechdel_info [ 'dubious' ] . '.png';
+
+	switch ( $bechdel_info [ 'rating' ] )
+	{
+		case 0:
+			$text = 'Weniger als zwei Frauen im Film';
+			break;
+		case 1:
+			$text = 'Zwei oder mehr Frauen im Film, die aber nicht miteinander reden';
+			break;
+		case 2:
+			$text = 'Zwei oder mehr Frauen im Film, die aber nur über Männer reden';
+			break;
+		case 3:
+			$text = 'Zwei oder mehr Frauen im Film, die über etwas anderes als Männer reden';
+			break;
+	}
+
+	if ( $bechdel_info [ 'dubious' ] )
+		$text .= ', (uneindeutig)';
+
+	return '<dt>Bechdel:</dt><dd><a href="http://bechdeltest.com/view/' . $bechdel_info [ 'id' ] . '" target="_blank"><img src="' . $src . '" alt="' . $text  . '" title="' . $text  . '" /></a></dd>';
 }
