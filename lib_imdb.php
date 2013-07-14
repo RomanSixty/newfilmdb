@@ -87,7 +87,8 @@ function _charsetPrepare ( $string )
     $string = html_entity_decode ( $string );
     $string = str_replace ( '&#x27;', "'", $string );
 
-    $string = utf8_encode ( $string );
+	// offenbar nicht mehr nötig...
+    //$string = utf8_encode ( $string );
 
     return trim ( $string );
 }
