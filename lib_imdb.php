@@ -20,6 +20,11 @@ function getMovie ( $imdb_id )
 {
     $movie = new imdb ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
 
+	$title_orig = $movie->orig_title();
+
+	if ( empty ( $title_orig ) )
+		$title_orig = $movie->title();
+
     // deutscher Titel
     $title_deu = $movie -> title();
 
@@ -46,7 +51,7 @@ function getMovie ( $imdb_id )
         'imdb' => array
         (
             'imdb_id'    => intval ( $imdb_id ),
-            'title_orig' => _charsetPrepare ( $movie->title() ),
+            'title_orig' => _charsetPrepare ( $title_orig ),
             'title_deu'  => _charsetPrepare ( $title_deu ),
             'year'       => $movie->year(),
             'runtime'    => intval ( $movie->runtime() ),
