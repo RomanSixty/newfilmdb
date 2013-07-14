@@ -287,6 +287,12 @@ li[data-count]:after {
   bottom: 20px;
 }
 
+#details .updatelink {
+  position: absolute;
+  right: 80px;
+  bottom: 20px;
+}
+
 
 /* Bearbeitungsformular */
 #edit_movie fieldset {

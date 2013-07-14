@@ -172,6 +172,24 @@ function initDetails()
 
         return false;
     });
+
+    $('#details .updatelink').click(function(){
+		$('#details').append('<div id="overlay"></div>');
+		
+        var imdb_id = $(this).attr('data-imdbid');
+
+        $.ajax({
+            url: 'rpc.php',
+            dataType: 'html',
+            data: 'act=update_imdb&imdb_id=' + imdb_id,
+            success: function(data) {
+                $('#details').html(data);
+                initDetails();
+            }
+        });
+
+        return false;
+    });
 }
 
 function initFilter ( id )

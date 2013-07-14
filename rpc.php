@@ -62,6 +62,23 @@ switch ( $_REQUEST [ 'act' ] )
 
         // kein break...
 
+	case 'update_imdb':
+
+		// Extra-IF, weil das hier sonst auch in den beiden bisherigen
+		// Fällen ausgeführt wird (da kein break)
+
+		if ( $_REQUEST [ 'act' ] == 'update_imdb' )
+		{
+			$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
+
+			$movie = getMovie ( $imdb_id );
+
+			updateMovie ( $imdb_id,
+						  array ( 'imdb' => $movie [ 'imdb' ] ) );
+		}
+
+		// kein break...
+
     case 'details':
         $return = getMovieDetails ( $_REQUEST [ 'imdb_id' ] );
         break;
