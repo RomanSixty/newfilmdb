@@ -134,13 +134,19 @@ function getMovieDetails ( $imdb_id )
          && empty ( $movie [ 'custom' ][ 'quality' ] ) )
 		$replacements [ 'NOTES_QUALITY' ] = false;
 
+	$directnum = $directshown = 0;
 	$directors = '';
     foreach ( $movie [ 'imdb' ][ 'director' ] as $director )
     {
-        if ( $num = directorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $director ) )
+        if ( $directshown < 5 && $num = directorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $director ) )
+		{
             $directors .= '<li data-count="' . ($num+1) . '"><a href="#">' . $director . '</a></li>';
-        else
+			$directshown++;
+		}
+        elseif ( $directnum < 3 )
             $directors .= '<li>' . $director . '</li>';
+
+		$directnum++;
     }
     $replacements [ 'DIRECTORS' ] = $directors;
 
@@ -149,7 +155,7 @@ function getMovieDetails ( $imdb_id )
     $actors = '';
     foreach ( $movie [ 'imdb' ][ 'cast' ] as $actor )
     {
-        if ( $actshown < 40 && $num = actorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $actor ) )
+        if ( $actshown < 30 && $num = actorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $actor ) )
         {
             $actors .= '<li data-count="' . ($num+1) . '"><a href="#">' . $actor . '</a></li>';
             $actshown++;
