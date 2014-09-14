@@ -18,58 +18,58 @@ chdir ( 'imdbphp' );
  */
 function getMovie ( $imdb_id )
 {
-    $movie = new imdb ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
+	$movie = new imdb ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
 
 	$title_orig = $movie->orig_title();
 
 	if ( empty ( $title_orig ) )
 		$title_orig = $movie->title();
 
-    // deutscher Titel
-    $title_deu = $movie -> title();
+	// deutscher Titel
+	$title_deu = $movie -> title();
 
-    foreach ( (array) $movie -> alsoknow() as $aka )
-        if (    $aka [ 'country' ] == 'Germany'
-             || $aka [ 'country' ] == 'West Germany' )
-        {
-            $title_deu = $aka [ 'title' ];
-            break;
-        }
-        elseif ( $aka [ 'country' ] == 'International' )
-            $title_deu = $aka [ 'title' ];
+	foreach ( (array) $movie -> alsoknow() as $aka )
+		if (    $aka [ 'country' ] == 'Germany'
+			 || $aka [ 'country' ] == 'West Germany' )
+		{
+			$title_deu = $aka [ 'title' ];
+			break;
+		}
+		elseif ( $aka [ 'country' ] == 'International' )
+			$title_deu = $aka [ 'title' ];
 
-    // Regisseur
-    foreach ( (array) $movie -> director() as $d )
-        $directors[] = _charsetPrepare ( $d [ 'name' ] );
+	// Regisseur
+	foreach ( (array) $movie -> director() as $d )
+		$directors[] = _charsetPrepare ( $d [ 'name' ] );
 
-    // Schauspieler
-    foreach ( (array) $movie->cast() as $c )
-        $actors[] = _charsetPrepare ( $c [ 'name' ] );
+	// Schauspieler
+	foreach ( (array) $movie->cast() as $c )
+		$actors[] = _charsetPrepare ( $c [ 'name' ] );
 
-    return array
-    (
-        'imdb' => array
-        (
-            'imdb_id'    => intval ( $imdb_id ),
-            'title_orig' => _charsetPrepare ( $title_orig ),
-            'title_deu'  => _charsetPrepare ( $title_deu ),
-            'year'       => $movie->year(),
-            'runtime'    => intval ( $movie->runtime() ),
-            'rating'     => $movie->rating(),
-            'genres'     => $movie->genres(),
-            'director'   => $directors,
-            'cast'       => $actors,
-            'plot'       => _charsetPrepare ( $movie->plotoutline() ),
-            'photo'      => $movie->photo_localurl()
-        ),
-        'custom' => array
-        (
-            'rating'     => 0,
-            'languages'  => array(),
-            'notes'      => '',
-            'qualitaet'  => ''
-        ),
-        'fulltext'       => ''
+	return array
+	(
+		'imdb' => array
+		(
+			'imdb_id'    => intval ( $imdb_id ),
+			'title_orig' => _charsetPrepare ( $title_orig ),
+			'title_deu'  => _charsetPrepare ( $title_deu ),
+			'year'       => $movie->year(),
+			'runtime'    => intval ( $movie->runtime() ),
+			'rating'     => $movie->rating(),
+			'genres'     => $movie->genres(),
+			'director'   => $directors,
+			'cast'       => $actors,
+			'plot'       => _charsetPrepare ( $movie->plotoutline() ),
+			'photo'      => $movie->photo_localurl()
+		),
+		'custom' => array
+		(
+			'rating'     => 0,
+			'languages'  => array(),
+			'notes'      => '',
+			'qualitaet'  => ''
+		),
+		'fulltext'       => ''
    );
 }
 
@@ -81,14 +81,14 @@ function getMovie ( $imdb_id )
  */
 function _charsetPrepare ( $string )
 {
-    $string = strip_tags ( $string );
-    $string = str_replace ( 'See full summary&nbsp;&raquo;', '', $string );
+	$string = strip_tags ( $string );
+	$string = str_replace ( 'See full summary&nbsp;&raquo;', '', $string );
 
-    $string = html_entity_decode ( $string );
-    $string = str_replace ( '&#x27;', "'", $string );
+	$string = html_entity_decode ( $string );
+	$string = str_replace ( '&#x27;', "'", $string );
 
 	// offenbar nicht mehr nötig...
-    //$string = utf8_encode ( $string );
+	//$string = utf8_encode ( $string );
 
-    return trim ( $string );
+	return trim ( $string );
 }

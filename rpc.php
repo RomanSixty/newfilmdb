@@ -18,29 +18,29 @@ require ( 'lib_imdb.php' );
  */
 function rpc_filter ( $p )
 {
-    $movies = getMovieList ( getFilters ( $p ) );
+	$movies = getMovieList ( getFilters ( $p ) );
 
-    $html = '';
+	$html = '';
 
-    foreach ( $movies as $movie )
-        $html .= getMovieSnippet ( $movie );
+	foreach ( $movies as $movie )
+		$html .= getMovieSnippet ( $movie );
 
-    return array ( 'count' => count ( $movies ),
-                   'html'  => $html );
+	return array ( 'count' => count ( $movies ),
+				   'html'  => $html );
 }
 
 switch ( $_REQUEST [ 'act' ] )
 {
-    case 'add_movie':
-        $imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
+	case 'add_movie':
+		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
 
-        if (    empty ( $imdb_id )
-             || empty ( $_REQUEST [ 'custom' ][ 'languages' ] ) )
-        {
-            $return = getEditForm();
-            break;
-        }
-        else
+		if (    empty ( $imdb_id )
+			 || empty ( $_REQUEST [ 'custom' ][ 'languages' ] ) )
+		{
+			$return = getEditForm();
+			break;
+		}
+		else
 		{
 			$movie = getMovie ( $imdb_id );
 
@@ -48,19 +48,19 @@ switch ( $_REQUEST [ 'act' ] )
 			if ( false !== ( $bechdel_info = getBechdelInfo ( $imdb_id ) ) )
 				$movie [ 'bechdel' ] = $bechdel_info;
 
-            insertMovie ( $movie );
+			insertMovie ( $movie );
 		}
 
-        // kein break...
+		// kein break...
 
-    case 'save_movie':
-        $imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
+	case 'save_movie':
+		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
 
-        if ( !empty ( $imdb_id ) )
-            updateMovie ( $imdb_id,
-                          array ( 'custom' => $_REQUEST [ 'custom' ] ) );
+		if ( !empty ( $imdb_id ) )
+			updateMovie ( $imdb_id,
+						  array ( 'custom' => $_REQUEST [ 'custom' ] ) );
 
-        // kein break...
+		// kein break...
 
 	case 'update_imdb':
 
@@ -79,29 +79,29 @@ switch ( $_REQUEST [ 'act' ] )
 
 		// kein break...
 
-    case 'details':
-        $return = getMovieDetails ( $_REQUEST [ 'imdb_id' ] );
-        break;
+	case 'details':
+		$return = getMovieDetails ( $_REQUEST [ 'imdb_id' ] );
+		break;
 
-    case 'add':
-        $return = getEditForm ( $_REQUEST [ 'imdb_id' ], false );
-        break;
+	case 'add':
+		$return = getEditForm ( $_REQUEST [ 'imdb_id' ], false );
+		break;
 
-    case 'edit':
-        $return = getEditForm ( $_REQUEST [ 'imdb_id' ], true );
-        break;
+	case 'edit':
+		$return = getEditForm ( $_REQUEST [ 'imdb_id' ], true );
+		break;
 
-    default:
-        $return = rpc_filter ( $_REQUEST );
-        break;
+	default:
+		$return = rpc_filter ( $_REQUEST );
+		break;
 }
 
 if ( !empty ( $return ) )
 {
-    header ( 'Content-Encoding: deflate' );
+	header ( 'Content-Encoding: deflate' );
 
-    if ( is_array ( $return ) )
-        echo substr ( gzcompress ( json_encode ( $return ) ), 2 );
-    else
-        echo substr ( gzcompress ( $return ), 2 );
+	if ( is_array ( $return ) )
+		echo substr ( gzcompress ( json_encode ( $return ) ), 2 );
+	else
+		echo substr ( gzcompress ( $return ), 2 );
 }

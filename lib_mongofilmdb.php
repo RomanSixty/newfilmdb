@@ -8,7 +8,7 @@
  */
 function isAdmin()
 {
-    return ( $_SERVER [ 'REMOTE_ADDR' ] == '192.168.0.2' );
+	return ( $_SERVER [ 'REMOTE_ADDR' ] == '192.168.0.2' );
 }
 
 /**
@@ -28,38 +28,38 @@ $collection = $db -> movie;
  */
 function getMovieList()
 {
-    global $collection;
+	global $collection;
 
-    $filter = getFilters ( $_REQUEST );
-    $order  = getOrder   ( $filter );
+	$filter = getFilters ( $_REQUEST );
+	$order  = getOrder   ( $filter );
 
-    $result = $collection -> find (
-        $filter,
-        array (
-            'imdb.imdb_id'     => 1,
-            'imdb.title_orig'  => 1,
-            'imdb.photo'       => 1,
-            'custom.rating'    => 1
-        )
-    ) -> sort ( $order );
+	$result = $collection -> find (
+		$filter,
+		array (
+			'imdb.imdb_id'     => 1,
+			'imdb.title_orig'  => 1,
+			'imdb.photo'       => 1,
+			'custom.rating'    => 1
+		)
+	) -> sort ( $order );
 
-    // Struktur verflachen
-    $movies = array();
+	// Struktur verflachen
+	$movies = array();
 
-    foreach ( $result as $r )
-    {
-        $movies[] = array (
-            'imdb_id'   => $r [ 'imdb'   ][ 'imdb_id'    ],
-            'title'     => $r [ 'imdb'   ][ 'title_orig' ],
-            'photo'     => $r [ 'imdb'   ][ 'photo'      ],
-            'rating'    => $r [ 'custom' ][ 'rating'     ]
-        );
-    }
+	foreach ( $result as $r )
+	{
+		$movies[] = array (
+			'imdb_id'   => $r [ 'imdb'   ][ 'imdb_id'    ],
+			'title'     => $r [ 'imdb'   ][ 'title_orig' ],
+			'photo'     => $r [ 'imdb'   ][ 'photo'      ],
+			'rating'    => $r [ 'custom' ][ 'rating'     ]
+		);
+	}
 
-    if ( empty ( $order ) )
-        shuffle ( $movies );
+	if ( empty ( $order ) )
+		shuffle ( $movies );
 
-    return $movies;
+	return $movies;
 }
 
 /**
@@ -70,13 +70,13 @@ function getMovieList()
  */
 function getSingleMovie ( $imdb_id )
 {
-    global $collection;
+	global $collection;
 
-    $result = $collection -> findOne (
-        array ( 'imdb.imdb_id' => intval ( $imdb_id ) )
-    );
+	$result = $collection -> findOne (
+		array ( 'imdb.imdb_id' => intval ( $imdb_id ) )
+	);
 
-    return $result;
+	return $result;
 }
 
 /**
@@ -87,36 +87,36 @@ function getSingleMovie ( $imdb_id )
  */
 function getFilters ( $form )
 {
-    $filter = array();
+	$filter = array();
 
-    // Volltextsuche
-    if ( !empty ( $form [ 'fulltext' ] ) )
-    {
-        $terms = explode ( ' ', _transliterate ( $form [ 'fulltext' ] ) );
+	// Volltextsuche
+	if ( !empty ( $form [ 'fulltext' ] ) )
+	{
+		$terms = explode ( ' ', _transliterate ( $form [ 'fulltext' ] ) );
 
-        foreach ( $terms as $term )
-            $regex[] = new MongoRegex ( '/' . $term . '.*/i' );
+		foreach ( $terms as $term )
+			$regex[] = new MongoRegex ( '/' . $term . '.*/i' );
 
-        $filter [ 'fulltext' ] = array ( '$all' => $regex );
-    }
+		$filter [ 'fulltext' ] = array ( '$all' => $regex );
+	}
 
-    // Sprachfilter (ODER)
-    if ( is_array ( $form [ 'lang' ] ) && !empty ( $form [ 'lang' ] ) )
-        $filter [ 'custom.languages' ] = array ( '$in' => $form [ 'lang' ] );
+	// Sprachfilter (ODER)
+	if ( is_array ( $form [ 'lang' ] ) && !empty ( $form [ 'lang' ] ) )
+		$filter [ 'custom.languages' ] = array ( '$in' => $form [ 'lang' ] );
 
-    // Regiefilter
-    if ( is_array ( $form [ 'director' ] ) && !empty ( $form [ 'director' ] ) )
-        $filter [ 'imdb.director' ] = array ( '$in' => $form [ 'director' ] );
+	// Regiefilter
+	if ( is_array ( $form [ 'director' ] ) && !empty ( $form [ 'director' ] ) )
+		$filter [ 'imdb.director' ] = array ( '$in' => $form [ 'director' ] );
 
-    // Cast-Filter (UND)
-    if ( is_array ( $form [ 'cast' ] ) && !empty ( $form [ 'cast' ] ) )
-        $filter [ 'imdb.cast' ] = array ( '$all' => $form [ 'cast' ] );
+	// Cast-Filter (UND)
+	if ( is_array ( $form [ 'cast' ] ) && !empty ( $form [ 'cast' ] ) )
+		$filter [ 'imdb.cast' ] = array ( '$all' => $form [ 'cast' ] );
 
-    // Genre-Filter (UND)
-    if ( is_array ( $form [ 'genre' ] ) && !empty ( $form [ 'genre' ] ) )
-        $filter [ 'imdb.genres' ] = array ( '$all' => $form [ 'genre' ] );
+	// Genre-Filter (UND)
+	if ( is_array ( $form [ 'genre' ] ) && !empty ( $form [ 'genre' ] ) )
+		$filter [ 'imdb.genres' ] = array ( '$all' => $form [ 'genre' ] );
 
-    return $filter;
+	return $filter;
 }
 
 /**
@@ -127,11 +127,11 @@ function getFilters ( $form )
  */
 function getOrder ( $filter )
 {
-    #if (    !empty ( $filter [ 'imdb.director' ] )
-    #     || !empty ( $filter [ 'imdb.cast'     ] ) )
-        return array ( 'imdb.title_orig' => 1 );
+	#if (    !empty ( $filter [ 'imdb.director' ] )
+	#     || !empty ( $filter [ 'imdb.cast'     ] ) )
+		return array ( 'imdb.title_orig' => 1 );
 
-    return array();
+	return array();
 }
 
 /**
@@ -141,39 +141,39 @@ function getOrder ( $filter )
  */
 function insertMovie ( $movie )
 {
-    if ( !isAdmin() ) return;
+	if ( !isAdmin() ) return;
 
-    global $collection;
+	global $collection;
 
-    updateFulltext ( $movie );
+	updateFulltext ( $movie );
 
-    $collection -> save ( $movie );
+	$collection -> save ( $movie );
 }
 
 /**
- * Filmdaten aktualisieren (noch nicht eingesetzt)
+ * Filmdaten aktualisieren
  *
  * @param Integer $imdb_id IMDb-ID
  * @param Array $custom zu aktualisierende Filmdaten
  */
 function updateMovie ( $imdb_id, $custom )
 {
-    if ( !isAdmin() ) return;
+	if ( !isAdmin() ) return;
 
-    global $collection;
+	global $collection;
 
-    $imdb_id = intval ( $imdb_id );
+	$imdb_id = intval ( $imdb_id );
 
-    $collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
-                            array ( '$set' => $custom ) );
+	$collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
+							array ( '$set' => $custom ) );
 
-    // Volltextindex aktualisieren
-    $movie = getSingleMovie ( $imdb_id );
+	// Volltextindex aktualisieren
+	$movie = getSingleMovie ( $imdb_id );
 
-    updateFulltext ( $movie );
+	updateFulltext ( $movie );
 
-    $collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
-                            array ( '$set' => array ( 'fulltext' => $movie [ 'fulltext' ] ) ) );
+	$collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
+							array ( '$set' => array ( 'fulltext' => $movie [ 'fulltext' ] ) ) );
 }
 
 /**
@@ -183,22 +183,22 @@ function updateMovie ( $imdb_id, $custom )
  */
 function updateFulltext ( &$movie )
 {
-    // alle zu indizierenden Felder zusammensuchen
+	// alle zu indizierenden Felder zusammensuchen
 
-    $fulltext = $movie [ 'imdb' ][ 'title_orig' ] . ' '
-              . $movie [ 'imdb' ][ 'title_deu'  ] . ' '
-              . implode ( ' ', $movie [ 'imdb' ][ 'director' ] ) . ' '
-              . implode ( ' ', $movie [ 'imdb' ][ 'cast'     ] ) . ' '
-              . $movie [ 'custom' ][ 'notes' ];
+	$fulltext = $movie [ 'imdb' ][ 'title_orig' ] . ' '
+			  . $movie [ 'imdb' ][ 'title_deu'  ] . ' '
+			  . implode ( ' ', $movie [ 'imdb' ][ 'director' ] ) . ' '
+			  . implode ( ' ', $movie [ 'imdb' ][ 'cast'     ] ) . ' '
+			  . $movie [ 'custom' ][ 'notes' ];
 
-    $fulltext = _transliterate ( $fulltext );
+	$fulltext = _transliterate ( $fulltext );
 
-    // jedes Wort nur einmal
-    $fulltext = array_unique ( explode ( ' ', $fulltext ) );
+	// jedes Wort nur einmal
+	$fulltext = array_unique ( explode ( ' ', $fulltext ) );
 
-    // array_values hier, damit die Elemente ohne Lücken durchnummeriert
-    // sind, andernfalls kann die MongoDB darin nicht vernünftig suchen
-    $movie [ 'fulltext' ] = array_values ( $fulltext );
+	// array_values hier, damit die Elemente ohne Lücken durchnummeriert
+	// sind, andernfalls kann die MongoDB darin nicht vernünftig suchen
+	$movie [ 'fulltext' ] = array_values ( $fulltext );
 }
 
 /**
@@ -209,14 +209,14 @@ function updateFulltext ( &$movie )
  */
 function _transliterate ( $string )
 {
-    setlocale ( 'LC_ALL', 'de_DE' );
+	setlocale ( 'LC_ALL', 'de_DE' );
 
-    $string = iconv ( 'utf-8', 'ASCII//TRANSLIT', $string );
+	$string = iconv ( 'utf-8', 'ASCII//TRANSLIT', $string );
 
-    $string = preg_replace ( '~[^\w ]~', '', $string );
-    $string = preg_replace ( '~[\s]+~', ' ', $string );
+	$string = preg_replace ( '~[^\w ]~', '', $string );
+	$string = preg_replace ( '~[\s]+~', ' ', $string );
 
-    return strtolower ( $string );
+	return strtolower ( $string );
 }
 
 /**
@@ -228,14 +228,14 @@ function _transliterate ( $string )
  */
 function directorHasOtherMovies ( $imdb_id, $director )
 {
-    global $collection;
+	global $collection;
 
-    $other = $collection -> find (
-        array ( 'imdb.imdb_id'  => array ( '$ne' => intval ( $imdb_id ) ),
-                'imdb.director' => array ( '$in' => array ( $director ) ) )
-    ) -> count();
+	$other = $collection -> find (
+		array ( 'imdb.imdb_id'  => array ( '$ne' => intval ( $imdb_id ) ),
+				'imdb.director' => array ( '$in' => array ( $director ) ) )
+	) -> count();
 
-    return $other;
+	return $other;
 }
 
 /**
@@ -247,12 +247,12 @@ function directorHasOtherMovies ( $imdb_id, $director )
  */
 function actorHasOtherMovies ( $imdb_id, $actor )
 {
-    global $collection;
+	global $collection;
 
-    $other = $collection -> find (
-        array ( 'imdb.imdb_id'  => array ( '$ne' => intval ( $imdb_id ) ),
-                'imdb.cast' => array ( '$in' => array ( $actor ) ) )
-    ) -> count();
+	$other = $collection -> find (
+		array ( 'imdb.imdb_id'  => array ( '$ne' => intval ( $imdb_id ) ),
+				'imdb.cast' => array ( '$in' => array ( $actor ) ) )
+	) -> count();
 
-    return $other;
+	return $other;
 }
