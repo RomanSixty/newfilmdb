@@ -19,33 +19,65 @@ function templateReplacements ( $template, $replacements )
 	{
 		if ( is_array ( $val ) )
 		{
-			preg_match ( '~({{{LOOP_'.$key.'(.*%%%'.$key.'%%%.*)}}})~sU', $template, $matches );
-
-			if ( count ( $matches ) )
+			if ( preg_match ( '~{{{LOOP_'.$key.'(.*)}}}~sU', $template, $matches ) !== false )
 			{
 				$rep = '';
 
 				foreach ( $val as $value )
-					$rep .= str_replace ( '%%%' . $key . '%%%', $value, $matches [ 2 ] );
+				{
+					$temp = $matches [ 1 ];
 
-				$template = str_replace ( $matches [ 1 ], $rep, $template );
+					handleConditions ( $temp, $value );
+
+					if ( is_array ( $value ) )
+					{
+						$rep .= $temp;
+
+						foreach ( $value as $k => $v )
+							$rep = preg_replace ( '~%%%' . $key . '.' . $k . '%%%~sU', $v, $rep );
+
+						$rep = preg_replace ( '~%%%.*%%%~sU', '', $rep );
+					}
+					else
+						$rep .= preg_replace ( '~%%%' . $key . '%%%~sU', $value, $temp );
+				}
+
+				$template = str_replace ( $matches [ 0 ], $rep, $template );
 			}
-			else
-				$template = str_replace ( $matches [ 1 ], '', $template );
 		}
 		else
 		{
 			$template = str_replace ( '%%%'.$key.'%%%', $val,   $template );
-
-			// Bedingungen
-			if ( empty ( $val ) )
-			{
-				$template = preg_replace ( '~<!-- !!!'.$key.'_START!!! -->.*<!-- !!!'.$key.'_END!!! -->~sU', '', $template );
-			}
 		}
 	}
 
+	handleConditions ( $template, $replacements );
+
 	return $template;
+}
+
+function handleConditions ( &$template, $replacements )
+{
+	if ( preg_match_all ( '~{IF (.*)}(.*){ENDIF \1}~sU', $template, $matches ) !== false )
+	{
+		foreach ( $matches [ 1 ] as $k => $var )
+		{
+			$parts = explode ( '.', $var );
+
+			if ( count ( $parts ) == 1 )
+			{
+				if ( empty ( $replacements [ $var ] ) )
+					$template = str_replace ( $matches [ 0 ][ $k ], '', $template );
+				else
+					$template = str_replace ( $matches [ 0 ][ $k ], $matches [ 2 ][ $k ], $template );
+			}
+			else
+				if ( empty ( $replacements [ $parts [ 0 ]][ $parts [ 1 ]] ) )
+					$template = str_replace ( $matches [ 0 ][ $k ], '', $template );
+				else
+					$template = str_replace ( $matches [ 0 ][ $k ], $matches [ 2 ][ $k ], $template );
+		}
+	}
 }
 
 /**
@@ -59,8 +91,8 @@ function getBestImage ( $movie )
 {
 	if ( file_exists ( $photo = './images/own_' . str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT ) . '.jpg' ) )
     	return $photo;
-    elseif ( !empty ( $movie [ 'photo' ] ) )
-    	return $movie [ 'photo' ];
+    elseif ( !empty ( $movie [ 'imdb_photo' ] ) )
+    	return $movie [ 'imdb_photo' ];
     else
     	return './fdb_img/bg.jpg';
 }
@@ -96,7 +128,7 @@ function getMovieSnippet ( $movie )
 
     // Rating bestimmen
 	if ( $movie [ 'rating' ] > 0 )
-		$replacements [ 'RATING' ] = $movie [ 'rating' ].'/10';
+		$replacements [ 'RATING' ] = $movie [ 'custom_rating' ].'/10';
 	else
 		$replacements [ 'RATING' ] = 'noch keine Wertung';
 
@@ -111,68 +143,62 @@ function getMovieSnippet ( $movie )
  */
 function getMovieDetails ( $imdb_id )
 {
+	global $db;
+
 	$template = file_get_contents ( dirname ( __FILE__ ) . '/templates/movie_details.html' );
 
-	$movie = getSingleMovie ( $imdb_id );
+	$movie = $db -> getSingleMovie ( $imdb_id );
 
-	$replacements = $movie [ 'imdb' ];
+	$movie [ 'custom_notes'   ] = nl2br ( $movie [ 'custom_notes'   ] );
+	$movie [ 'custom_quality' ] = nl2br ( $movie [ 'custom_quality' ] );
 
-	foreach ( $movie [ 'custom' ] as $key => $val )
-	{
-		if ( is_array ( $val ) )
-			$replacements [ 'custom_'.$key ] = $val;
-		else
-			$replacements [ 'custom_'.$key ] = nl2br ( $val );
-	}
+	$movie [ 'IS_ADMIN'      ] = $db -> isAdmin();
+	$movie [ 'PHOTO'         ] = getBestImage ( $movie );
+	$movie [ 'IMDBID_PADDED' ] = str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
+	$movie [ 'TITLE_DIFF'    ] = ( $movie [ 'imdb_title_orig' ] != $movie [ 'imdb_title_deu' ] );
 
-	$replacements [ 'IS_ADMIN'      ] = isAdmin();
-	$replacements [ 'PHOTO'         ] = getBestImage ( $movie [ 'imdb' ] );
-	$replacements [ 'IMDBID_PADDED' ] = str_pad ( $movie [ 'imdb' ][ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
-	$replacements [ 'TITLE_DIFF'    ] = ( $movie [ 'imdb' ][ 'title_orig' ] != $movie [ 'imdb' ][ 'title_deu' ] );
+	if (    empty ( $movie [ 'custom_notes'   ] )
+         && empty ( $movie [ 'custom_quality' ] ) )
+		$movie [ 'NOTES_QUALITY' ] = false;
 
-	if (    empty ( $movie [ 'custom' ][ 'notes'   ] )
-         && empty ( $movie [ 'custom' ][ 'quality' ] ) )
-		$replacements [ 'NOTES_QUALITY' ] = false;
-
+	// wir zeigen maximal 5 Regisseure,
+	// davon maximal 3 ohne weitere Filme in der Datenbank
 	$directnum = $directshown = 0;
-	$directors = '';
-    foreach ( $movie [ 'imdb' ][ 'director' ] as $director )
+    foreach ( $movie [ 'director' ] as $key => $director )
     {
-        if ( $directshown < 5 && $num = directorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $director ) )
+        if ( $directshown < 5 && ( $num = $db -> directorMovieCount ( $director [ 'id' ] ) ) > 1 )
 		{
-            $directors .= '<li data-count="' . ($num+1) . '"><a href="#">' . $director . '</a></li>';
+			$movie [ 'director' ][ $key ][ 'moviecount' ] = $num;
 			$directshown++;
 		}
-        elseif ( $directnum < 3 )
-            $directors .= '<li>' . $director . '</li>';
+        elseif ( $directnum >= 3 )
+            unset ( $movie [ 'director' ][ $key ] );
 
 		$directnum++;
     }
-    $replacements [ 'DIRECTORS' ] = $directors;
 
-
+	// wir zeigen maximal 30 Cast-Mitglieder,
+	// davon maximal 5 ohne weitere Filme in der Datenbank
     $actnum = $actshown = 0;
-    $actors = '';
-    foreach ( $movie [ 'imdb' ][ 'cast' ] as $actor )
+    foreach ( $movie [ 'cast' ] as $key => $actor )
     {
-        if ( $actshown < 30 && $num = actorHasOtherMovies ( $movie [ 'imdb' ][ 'imdb_id' ], $actor ) )
+        if ( $actshown < 30 && ( $num = $db -> castMovieCount ( $actor [ 'id' ] ) ) > 1 )
         {
-            $actors .= '<li data-count="' . ($num+1) . '"><a href="#">' . $actor . '</a></li>';
+			$movie [ 'cast' ][ $key ][ 'moviecount' ] = $num;
             $actshown++;
         }
-        elseif ( $actnum < 5 )
-            $actors .= '<li>' . $actor . '</li>';
+        elseif ( $actnum >= 5 )
+            unset ( $movie [ 'cast' ][ $key ] );
 
         $actnum++;
     }
-    $replacements [ 'ACTORS' ] = $actors;
 
-	if ( !empty ( $movie [ 'bechdel' ] ) )
-		$replacements [ 'BECHDEL' ] = getBechdelImage ( $movie [ 'bechdel' ] );
+	if ( !empty ( $movie [ 'bechdel_id' ] ) )
+		$movie [ 'BECHDEL' ] = getBechdelImage ( $movie );
 	else
-		$replacements [ 'BECHDEL' ] = '';
+		$movie [ 'BECHDEL' ] = '';
 
-    return templateReplacements ( $template, $replacements );
+    return templateReplacements ( $template, $movie );
 }
 
 /**
@@ -270,11 +296,11 @@ function getEditForm ( $imdb_id, $edit = true )
     return $snippet;
 }
 
-function getBechdelImage ( $bechdel_info )
+function getBechdelImage ( $movie )
 {
-	$src = 'fdb_img/bechdel/' . $bechdel_info [ 'rating' ] . $bechdel_info [ 'dubious' ] . '.png';
+	$src = 'fdb_img/bechdel/' . $movie [ 'bechdel_rating' ] . $movie [ 'bechdel_dubious' ] . '.png';
 
-	switch ( $bechdel_info [ 'rating' ] )
+	switch ( $movie [ 'bechdel_rating' ] )
 	{
 		case 0:
 			$text = 'Weniger als zwei Frauen im Film';
@@ -290,8 +316,8 @@ function getBechdelImage ( $bechdel_info )
 			break;
 	}
 
-	if ( $bechdel_info [ 'dubious' ] )
+	if ( $movie [ 'bechdel_dubious' ] )
 		$text .= ', (uneindeutig)';
 
-	return '<dt>Bechdel:</dt><dd><a href="http://bechdeltest.com/view/' . $bechdel_info [ 'id' ] . '" target="_blank"><img src="' . $src . '" alt="' . $text  . '" title="' . $text  . '" /></a></dd>';
+	return '<dt>Bechdel:</dt><dd><a href="http://bechdeltest.com/view/' . $movie [ 'bechdel_id' ] . '" target="_blank"><img src="' . $src . '" alt="' . $text  . '" title="' . $text  . '" /></a></dd>';
 }

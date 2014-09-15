@@ -10,10 +10,12 @@
 <?php
 
 require ( 'lib_imdb.php' );
-require ( 'lib_mongofilmdb.php' );
+require ( 'lib_sqlitedb.php' );
 require ( 'lib_html.php' );
 
-$movies = getMovieList();
+$db = new sqlitedb();
+
+$movies = $db -> getMovieList();
 
 echo getDashboard ( count ( $movies ) );
 

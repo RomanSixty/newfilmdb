@@ -16,9 +16,17 @@ function isAdmin()
  * um die MongoDB abzufragen
  */
 
-$connection = new Mongo();
-$db = $connection -> selectDB ( 'filmdb' );
-$collection = $db -> movie;
+try
+{
+	$connection = new Mongo();
+	$db = $connection -> selectDB ( 'filmdb' );
+	$collection = $db -> movie;
+}
+catch ( Exception $e )
+{
+	echo '<p>Connection to MongoDB could not be established.</p>';
+	die ( shell_exec ( '/etc/init.d/mongodb restart' ) );
+}
 
 /**
  * Liste von Filmen

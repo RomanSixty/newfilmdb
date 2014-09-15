@@ -5,10 +5,12 @@
  * über die die AJAX-Abfragen laufen
  */
 
-require ( 'lib_mongofilmdb.php' );
+require ( 'lib_sqlitedb.php' );
 require ( 'lib_bechdel.php' );
 require ( 'lib_html.php' );
 require ( 'lib_imdb.php' );
+
+$db = new sqlitedb();
 
 /**
  * Filmliste basierend auf REQUEST-Parametern zurückgeben
