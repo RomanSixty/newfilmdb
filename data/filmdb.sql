@@ -29,13 +29,17 @@ CREATE TABLE IF NOT EXISTS "cast2movie" (
 	"cast_id" INTEGER NOT NULL ,
 	"imdb_id" INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS "actor_id" ON "cast2movie" ("cast_id" ASC);
+CREATE        INDEX IF NOT EXISTS "actor_id"      ON "cast2movie" ("cast_id" ASC);
+CREATE        INDEX IF NOT EXISTS "actor_imdb_id" ON "cast2movie" ("imdb_id" ASC);
+CREATE UNIQUE INDEX IF NOT EXISTS "actor_both"    ON "cast2movie" ("cast_id" ASC, "imdb_id" ASC);
 
 CREATE TABLE IF NOT EXISTS "director2movie" (
 	"cast_id" INTEGER NOT NULL,
 	"imdb_id" INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS "director_id" ON "director2movie" ("cast_id" ASC);
+CREATE        INDEX IF NOT EXISTS "director_id"      ON "director2movie" ("cast_id" ASC);
+CREATE        INDEX IF NOT EXISTS "director_imdb_id" ON "director2movie" ("imdb_id" ASC);
+CREATE UNIQUE INDEX IF NOT EXISTS "director_both"    ON "director2movie" ("cast_id" ASC, "imdb_id" ASC);
 
 CREATE TABLE IF NOT EXISTS "genre" (
 	"genre_id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE,
@@ -46,4 +50,4 @@ CREATE TABLE IF NOT EXISTS "genre2movie" (
 	"genre_id" INTEGER NOT NULL,
 	"imdb_id" INTEGER NOT NULL
 );
-CREATE UNIQUE INDEX IF NOT EXISTS "grenre_imdb_id" ON "genre2movie" ("imdb_id" ASC);
+CREATE INDEX IF NOT EXISTS "genre_imdb_id" ON "genre2movie" ("imdb_id" ASC);

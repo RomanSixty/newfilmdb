@@ -127,7 +127,7 @@ function getMovieSnippet ( $movie )
     $replacements [ 'PHOTO' ] = getBestImage ( $movie );
 
     // Rating bestimmen
-	if ( $movie [ 'rating' ] > 0 )
+	if ( !empty ( $movie [ 'rating' ] ) )
 		$replacements [ 'RATING' ] = $movie [ 'custom_rating' ].'/10';
 	else
 		$replacements [ 'RATING' ] = 'noch keine Wertung';

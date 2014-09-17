@@ -20,7 +20,9 @@ $db = new sqlitedb();
  */
 function rpc_filter ( $p )
 {
-	$movies = getMovieList ( getFilters ( $p ) );
+	global $db;
+
+	$movies = $db -> getMovieList ( $db -> getFilters ( $p ) );
 
 	$html = '';
 
@@ -31,7 +33,7 @@ function rpc_filter ( $p )
 				   'html'  => $html );
 }
 
-switch ( $_REQUEST [ 'act' ] )
+if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
 {
 	case 'add_movie':
 		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
@@ -92,11 +94,9 @@ switch ( $_REQUEST [ 'act' ] )
 	case 'edit':
 		$return = getEditForm ( $_REQUEST [ 'imdb_id' ], true );
 		break;
-
-	default:
-		$return = rpc_filter ( $_REQUEST );
-		break;
 }
+else
+	$return = rpc_filter ( $_REQUEST );
 
 if ( !empty ( $return ) )
 {

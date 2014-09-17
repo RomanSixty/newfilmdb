@@ -110,7 +110,8 @@ function getFilters ( $form )
 
 	// Sprachfilter (ODER)
 	if ( is_array ( $form [ 'lang' ] ) && !empty ( $form [ 'lang' ] ) )
-		$filter [ 'custom.languages' ] = array ( '$in' => $form [ 'lang' ] );
+		foreach ( $form [ 'lang' ] as $lang => $val )
+			$filter [ 'custom_' . $filter ] = 1;
 
 	// Regiefilter
 	if ( is_array ( $form [ 'director' ] ) && !empty ( $form [ 'director' ] ) )

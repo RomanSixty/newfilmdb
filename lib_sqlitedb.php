@@ -186,11 +186,41 @@ class sqlitedb extends SQLite3
 		return $data;
 	}
 
+	/**
+	 * wieviele in der DB vorhandene Filme hat ein Regisseur gedreht?
+	 *
+	 * @param String $director_id Cast-ID des Regisseurs
+	 * @return Boolean hat er oder hat er nicht
+	 */
+	function directorMovieCount ( $director_id )
+	{
+		$moviecount = $this -> results (
+			'SELECT COUNT(cast_id) AS cnt
+			FROM director2movie
+			WHERE cast_id=:cast_id',
+			array ( '@cast_id' => $director_id )
+		);
 
+		return $moviecount [ 0 ][ 'cnt' ];
+	}
 
+	/**
+	 * wieviele in der DB vorhandene Filme hat ein Cast-Mitglied gedreht?
+	 *
+	 * @param String $cast_id ID des Cast-Mitglieds
+	 * @return Boolean hat er oder hat er nicht
+	 */
+	function castMovieCount ( $cast_id )
+	{
+		$moviecount = $this -> results (
+			'SELECT COUNT(cast_id) AS cnt
+			FROM cast2movie
+			WHERE cast_id=:cast_id',
+			array ( '@cast_id' => $cast_id )
+		);
 
-
-
+		return $moviecount [ 0 ][ 'cnt' ];
+	}
 
 	/**
 	 * Filter aus REQUEST erzeugen
@@ -200,64 +230,95 @@ class sqlitedb extends SQLite3
 	 */
 	function getFilters ( $form )
 	{
-		$filter = array();
+		$joins = array();
+		$where = array();
 
 		// Volltextsuche
 		if ( !empty ( $form [ 'fulltext' ] ) )
 		{
-			$terms = explode ( ' ', _transliterate ( $form [ 'fulltext' ] ) );
+			$terms = explode ( ' ', $this -> _transliterate ( $form [ 'fulltext' ] ) );
 
 			foreach ( $terms as $term )
-				$regex[] = new MongoRegex ( '/' . $term . '.*/i' );
-
-			$filter [ 'fulltext' ] = array ( '$all' => $regex );
+				$where[] = 'm.fulltext LIKE "%' . $term . '%"';
 		}
 
 		// Sprachfilter (ODER)
-		if ( is_array ( $form [ 'lang' ] ) && !empty ( $form [ 'lang' ] ) )
+		if ( !empty ( $form [ 'lang' ] ) && is_array ( $form [ 'lang' ] ) )
 		{
 			$lang_where = array();
 
 			foreach ( $form [ 'lang' ] as $lang => $value )
 				$lang_where[] = $lang .'=1';
 
-			$where[] = '(' . implode ( ' OR ', $lang_where ) . ')';
+			$where [ 'lang' ] = '(' . implode ( ' OR ', $lang_where ) . ')';
 		}
 
 		// Regiefilter
-		if ( is_array ( $form [ 'director' ] ) && !empty ( $form [ 'director' ] ) )
+		if ( !empty ( $form [ 'director' ] ) && is_array ( $form [ 'director' ] ) )
+		{
 			foreach ( $form [ 'director' ] as $value )
-				$where[] = 'director.cast="' . $value . '"';
+				$dir_where[] = 'd2m.cast_id=' . intval ( $value );
+
+			$joins[] = 'LEFT JOIN director2movie d2m ON d2m.imdb_id=m.imdb_id';
+			$where[] = '(' . implode ( ' OR ', $dir_where ) . ')';
+		}
 
 		// Cast-Filter
-		if ( is_array ( $form [ 'cast' ] ) && !empty ( $form [ 'cast' ] ) )
+		if ( !empty ( $form [ 'cast' ] ) && is_array ( $form [ 'cast' ] ) )
+		{
+			$idx = 0;
 			foreach ( $form [ 'cast' ] as $value )
-				$where[] = 'actor.cast="' . $value . '"';
+			{
+				$joins[] = 'LEFT JOIN cast2movie a2m_'.$idx.' ON a2m_'.$idx.'.imdb_id=m.imdb_id';
+				$where[] = 'a2m_'.$idx.'.cast_id=' . intval ( $value );
+
+				$idx++;
+			}
+		}
 
 		// Genre-Filter (UND)
-		if ( is_array ( $form [ 'genre' ] ) && !empty ( $form [ 'genre' ] ) )
-			$filter [ 'imdb.genres' ] = array ( '$all' => $form [ 'genre' ] );
+		if ( !empty ( $form [ 'genre' ] ) && is_array ( $form [ 'genre' ] ) )
+		{
+			$idx = 0;
+			foreach ( $form [ 'genre' ] as $value )
+			{
+				$joins[] = 'LEFT JOIN genre2movie g2m_'.$idx.' ON g2m_'.$idx.'.imdb_id=m.imdb_id';
+				$where[] = 'g2m_'.$idx.'.genre_id=' . intval ( $value );
 
-		return $filter;
+				$idx++;
+			}
+		}
+
+		return array ( 'joins' => $joins, 'where' => $where );
 	}
 
 	/**
 	 * Liste von Filmen
 	 *
+	 * @param Array $filters REQUEST-Suchfilter
 	 * @return Array Filme
 	 * @todo Sortierungsmöglichkeiten
 	 */
-	function getMovieList()
+	function getMovieList ( $filters = null )
 	{
-		//$filter = getFilters ( $_REQUEST );
+		$sql = 'SELECT DISTINCT
+				m.imdb_id,
+				m.imdb_title_orig,
+				m.imdb_photo,
+				m.custom_rating
+			FROM movie m
+			%JOIN
+			%WHERE
+			%ORDER';
 
-		$sql = 'SELECT
-				imdb_id,
-				imdb_title_orig,
-				imdb_photo,
-				custom_rating
-			FROM movie
-			ORDER BY imdb_title_orig ASC';
+		$joins   = array();
+		$where[] = '1=1';
+
+		$filters [ 'where' ][] = '1=1';
+
+		$sql = str_replace ( '%JOIN',  implode ( ' ', $filters [ 'joins' ] ),                $sql );
+		$sql = str_replace ( '%WHERE', 'WHERE ' . implode ( ' AND ', $filters [ 'where' ] ), $sql );
+		$sql = str_replace ( '%ORDER', 'ORDER BY imdb_title_orig ASC',                       $sql );
 
 		return $this -> results ( $sql );
 	}
@@ -399,41 +460,5 @@ class sqlitedb extends SQLite3
 		$string = preg_replace ( '~[\s]+~', ' ', $string );
 
 		return strtolower ( $string );
-	}
-
-	/**
-	 * wieviele in der DB vorhandene Filme hat ein Regisseur gedreht?
-	 *
-	 * @param String $director_id Cast-ID des Regisseurs
-	 * @return Boolean hat er oder hat er nicht
-	 */
-	function directorMovieCount ( $director_id )
-	{
-		$moviecount = $this -> results (
-			'SELECT COUNT(cast_id) AS cnt
-			FROM director2movie
-			WHERE cast_id=:cast_id',
-			array ( '@cast_id' => $director_id )
-		);
-
-		return $moviecount [ 0 ][ 'cnt' ];
-	}
-
-	/**
-	 * wieviele in der DB vorhandene Filme hat ein Cast-Mitglied gedreht?
-	 *
-	 * @param String $cast_id ID des Cast-Mitglieds
-	 * @return Boolean hat er oder hat er nicht
-	 */
-	function castMovieCount ( $cast_id )
-	{
-		$moviecount = $this -> results (
-			'SELECT COUNT(cast_id) AS cnt
-			FROM cast2movie
-			WHERE cast_id=:cast_id',
-			array ( '@cast_id' => $cast_id )
-		);
-
-		return $moviecount [ 0 ][ 'cnt' ];
 	}
 }

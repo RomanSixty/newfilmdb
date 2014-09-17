@@ -85,7 +85,7 @@ function initDetails()
 
 		filterid = 'genre' + timest;
 
-		html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + $(this).html() + '" />';
+		html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + $(this).data('id') + '" />';
 		html += '<label class="filter" for="' + filterid + '">' + $(this).html() + '</label>';
 
 		$('label[id=genre]').after(html);
@@ -105,11 +105,15 @@ function initDetails()
 			$('label[for=dir]').remove();
 		}
 
-		html  = '<input id="dir" type="hidden" name="director[]" value="' + $(this).html() + '" />';
-		html += '<label class="filter" for="dir">' + $(this).html() + '</label>';
+		timest = +new Date();
+
+		filterid = 'dir' + timest;
+
+		html  = '<input id="' + filterid + '" type="hidden" name="director[]" value="' + $(this).data('id') + '" />';
+		html += '<label class="filter" for="' + filterid + '">' + $(this).html() + '</label>';
 
 		$('label[id=director]').after(html);
-		initFilter ( 'dir' );
+		initFilter ( filterid );
 
 		$('#fulltext').val('');
 		$('#searchform').submit();
@@ -129,7 +133,7 @@ function initDetails()
 
 		filterid = 'act' + timest;
 
-		html  = '<input class="act_filter" id="' + filterid + '" type="hidden" name="cast[]" value="' + $(this).html() + '" />';
+		html  = '<input class="act_filter" id="' + filterid + '" type="hidden" name="cast[]" value="' + $(this).data('id') + '" />';
 		html += '<label class="filter act_filter" for="' + filterid + '">' + $(this).html() + '</label>';
 
 		$('label[id=cast]').after(html);
