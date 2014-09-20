@@ -11,7 +11,7 @@ class sqlitedb extends SQLite3
 	{
 		$this -> open ( DIR . $this -> dbfile );
 
-		$this -> exec ( file_get_contents ( DIR . $this -> structure ) );
+		//$this -> exec ( file_get_contents ( DIR . $this -> structure ) );
 	}
 
 	/**
@@ -20,7 +20,7 @@ class sqlitedb extends SQLite3
 	 * @todo konfigurierbar machen
 	 * @return Boolean
 	 */
-	function isAdmin()
+	public function isAdmin()
 	{
 		return ( $_SERVER [ 'REMOTE_ADDR' ] == '192.168.0.2' );
 	}
@@ -33,9 +33,9 @@ class sqlitedb extends SQLite3
 	 * @param String $name vollständiger Name eines Cast-Mitglieds
 	 * @return Integer ID
 	 */
-	function getCastId ( $name )
+	private function getCastId ( $name )
 	{
-		$query = $this -> prepare ( 'SELECT "cast_id" FROM "cast" WHERE "cast"=:name;' );
+		$query = $this -> prepare ( 'SELECT "cast_id" FROM "cast" WHERE "cast"=:name' );
 		$query -> bindValue ( ':name', $name, SQLITE3_TEXT );
 
 		$res = $query -> execute();
@@ -44,7 +44,7 @@ class sqlitedb extends SQLite3
 			return $data [ 'cast_id' ];
 		else
 		{
-			$query = $this -> prepare ( 'INSERT INTO "cast"("cast") VALUES(:name);' );
+			$query = $this -> prepare ( 'INSERT INTO "cast"("cast") VALUES(:name)' );
 			$query -> bindValue ( ':name', $name, SQLITE3_TEXT );
 
 			$res = $query -> execute();
@@ -53,23 +53,37 @@ class sqlitedb extends SQLite3
 		}
 	}
 
-	function saveCast ( $table, $imdb_id, $arr_cast )
+	/**
+	 * speichert den aktuellen Cast eines Films, entfernt dazu ggf. den bestehenden
+	 *
+	 * @param String  $table    cast2movie | director2movie
+	 * @param Integer $imdb_id  IMDb-ID
+	 * @param Array   $arr_cast Liste von Cast-IDs
+	 */
+	private function saveCast ( $table, $imdb_id, $arr_cast )
 	{
 		$this -> exec ( 'DELETE FROM ' . $table . ' WHERE imdb_id=' . $imdb_id );
 
-		$sql = 'INSERT INTO ' . $table . ' ( cast_id, imdb_id ) VALUES ';
+		$sql = 'INSERT INTO ' . $table . ' ( cast_id, imdb_id, sort ) VALUES ';
 
+		$sort   = 0;
 		$values = array();
 
 		foreach ( $arr_cast as $cast_id )
-			$values[] = '(' . $cast_id . ', ' . $imdb_id . ')';
+			$values[] = '(' . $cast_id . ', ' . $imdb_id . ', ' . $sort++ . ')';
 
 		$sql .= implode ( ',', $values );
 
 		$this -> exec ( $sql );
 	}
 
-	function saveGenre ( $imdb_id, $arr_genres )
+	/**
+	 * speichert die aktuelle Liste der Genres zu einem Film, entfernt ggf. die bestehenden
+	 *
+	 * @param Integer $imdb_id  IMDb-ID
+	 * @param Array   $arr_genres Liste von Genre-IDs
+	 */
+	private function saveGenre ( $imdb_id, $arr_genres )
 	{
 		$this -> exec ( 'DELETE FROM genre2movie WHERE imdb_id=' . $imdb_id );
 
@@ -93,7 +107,7 @@ class sqlitedb extends SQLite3
 	 * @param String $name Name eines Genres
 	 * @return Integer ID
 	 */
-	function getGenreId ( $name )
+	private function getGenreId ( $name )
 	{
 		$query = $this -> prepare ( 'SELECT "genre_id" FROM "genre" WHERE "genre"=:name' );
 		$query -> bindValue ( ':name', $name, SQLITE3_TEXT );
@@ -113,7 +127,12 @@ class sqlitedb extends SQLite3
 		}
 	}
 
-	function saveMovie ( $data )
+	/**
+	 * speichert einen Film in der Datenbank, mitsamt aller Zusatzinfos, Cast, Genres etc.
+	 *
+	 * @param Array $data Film-Daten
+	 */
+	public function saveMovie ( $data )
 	{
 		$this -> results ( 'INSERT OR REPLACE INTO movie(
 			imdb_id,
@@ -132,8 +151,7 @@ class sqlitedb extends SQLite3
 			custom_quality,
 			bechdel_id,
 			bechdel_rating,
-			bechdel_dubious,
-			fulltext
+			bechdel_dubious
 		) VALUES (
 			:imdb_id,
 			:imdb_photo,
@@ -151,70 +169,85 @@ class sqlitedb extends SQLite3
 			:custom_quality,
 			:bechdel_id,
 			:bechdel_rating,
-			:bechdel_dubious,
-			:fulltext
+			:bechdel_dubious
 		)', $data );
-	}
 
-	private function results ( $sql, $placeholders = array() )
-	{
-		$query = $this -> prepare ( $sql );
-
-		foreach ( $placeholders as $key => $value )
+		// Cast
+		if ( isset ( $data [ 'cast' ] ) )
 		{
-			if ( empty ( $value ) )
-				$type = SQLITE3_NULL;
-			else switch ( $key{0} )
-			{
-				case '@': $type = SQLITE3_INTEGER; break;
-				case '#': $type = SQLITE3_FLOAT;   break;
-				case '$':
-				default:  $type = SQLITE3_TEXT;    break;
-			}
+			$actors = array();
 
-			$query -> bindValue ( ':'.substr ( $key, 1 ), $value, $type );
+			foreach ( $data [ 'cast' ] as $actor )
+				$actors[] = $this -> getCastId ( $actor );
+
+			$this -> saveCast ( 'cast2movie', $data ['@imdb_id' ], $actors );
 		}
 
-		$res = $query -> execute();
+		// Director
+		if ( isset ( $data [ 'director' ] ) )
+		{
+			$directors = array();
 
-		$data = array();
+			foreach ( $data [ 'director' ] as $director )
+				$directors[] = $this -> getCastId ( $director );
 
-		if ( $res )
-			while ( $ds = $res -> fetchArray ( SQLITE3_ASSOC ) )
-				$data[] = $ds;
+			$this -> saveCast ( 'director2movie', $data ['@imdb_id' ], $directors );
+		}
 
-		return $data;
+		// Genres
+		$genres = array();
+
+		foreach ( $data [ 'genres' ] as $genre )
+			$genres[] = $this -> getGenreId ( $genre );
+
+		$this -> saveGenre ( $data [ '@imdb_id' ], $genres );
+
+		$this -> updateFulltext ( $data [ '@imdb_id' ] );
 	}
 
 	/**
-	 * wieviele in der DB vorhandene Filme hat ein Regisseur gedreht?
+	 * aktualisiert die IMDb-unabhängigen Filmdaten
 	 *
-	 * @param String $director_id Cast-ID des Regisseurs
-	 * @return Boolean hat er oder hat er nicht
+	 * @param Array $data Filmdaten aus dem Edit-Formular
 	 */
-	function directorMovieCount ( $director_id )
+	public function updateMovie ( $data )
 	{
-		$moviecount = $this -> results (
-			'SELECT COUNT(cast_id) AS cnt
-			FROM director2movie
-			WHERE cast_id=:cast_id',
-			array ( '@cast_id' => $director_id )
+		$movie = array (
+			'@imdb_id'        => $data [ 'imdb_id'        ],
+			'@language_deu'   => $data [ 'language_deu'   ],
+			'@language_eng'   => $data [ 'language_eng'   ],
+			'@language_omu'   => $data [ 'language_omu'   ],
+			'@custom_rating'  => $data [ 'custom_rating'  ],
+			'$custom_notes'   => $data [ 'custom_notes'   ],
+			'$custom_quality' => $data [ 'custom_quality' ]
 		);
 
-		return $moviecount [ 0 ][ 'cnt' ];
+		// und aktualisieren
+		$this -> results ( 'UPDATE movie
+			SET
+				language_deu   = :language_deu,
+				language_eng   = :language_eng,
+				language_omu   = :language_omu,
+				custom_rating  = :custom_rating,
+				custom_notes   = :custom_notes,
+				custom_quality = :custom_quality
+			WHERE imdb_id = :imdb_id', $movie );
+
+		$this -> updateFulltext ( $data [ 'imdb_id' ] );
 	}
 
 	/**
 	 * wieviele in der DB vorhandene Filme hat ein Cast-Mitglied gedreht?
 	 *
 	 * @param String $cast_id ID des Cast-Mitglieds
-	 * @return Boolean hat er oder hat er nicht
+	 * @param String $table   director2movie | cast2movie
+	 * @return Integer Anzahl Filme
 	 */
-	function castMovieCount ( $cast_id )
+	public function castMovieCount ( $cast_id, $table )
 	{
 		$moviecount = $this -> results (
 			'SELECT COUNT(cast_id) AS cnt
-			FROM cast2movie
+			FROM ' . $table . '
 			WHERE cast_id=:cast_id',
 			array ( '@cast_id' => $cast_id )
 		);
@@ -226,9 +259,9 @@ class sqlitedb extends SQLite3
 	 * Filter aus REQUEST erzeugen
 	 *
 	 * @param Array $form Formulardaten aus einem REQUEST
-	 * @return Array MongoDB-Filterkriterien
+	 * @return Array JOINs und WHERE-Klausel (jeweils Arrays) für DB-Abfrage
 	 */
-	function getFilters ( $form )
+	public function getFilters ( $form )
 	{
 		$joins = array();
 		$where = array();
@@ -358,7 +391,8 @@ class sqlitedb extends SQLite3
 			FROM "cast" c
 			LEFT JOIN cast2movie c2m
 				ON c2m.cast_id=c.cast_id
-			WHERE imdb_id=:imdb_id',
+			WHERE imdb_id=:imdb_id
+			ORDER BY c2m.sort ASC',
 			array ( '@imdb_id' => $imdb_id )
 		);
 
@@ -378,70 +412,93 @@ class sqlitedb extends SQLite3
 	}
 
 	/**
-	 * fertige Filmdaten in die Datenbank schreiben
+	 * SQLite-Wrapper für Queries mit Parametern
 	 *
-	 * @param Array $movie Filmdaten
+	 * @param String $sql SQL-Query mit ggf. Platzhaltern
+	 * @param Array  $placeholders assoziatives Array mit Platzhaltern und deren Datentypen
+	 * @return Array Ergebnis der SQL-Abfrage
 	 */
-	function insertMovie ( $movie )
+	private function results ( $sql, $placeholders = array() )
 	{
-		if ( !isAdmin() ) return;
+		$query = $this -> prepare ( $sql );
 
-		global $collection;
+		foreach ( $placeholders as $key => $value )
+		{
+			if ( empty ( $value ) && $value != 0 )
+				$type = SQLITE3_NULL;
+			else switch ( $key{0} )
+			{
+				case '@': $type = SQLITE3_INTEGER; break;
+				case '#': $type = SQLITE3_FLOAT;   break;
+				case '$':
+				default:  $type = SQLITE3_TEXT;    break;
+			}
 
-		updateFulltext ( $movie );
+			$query -> bindValue ( ':'.substr ( $key, 1 ), $value, $type );
+		}
 
-		$collection -> save ( $movie );
+		$res = $query -> execute();
+
+		$data = array();
+
+		if ( $res )
+			while ( $ds = $res -> fetchArray ( SQLITE3_ASSOC ) )
+				$data[] = $ds;
+
+		return $data;
 	}
 
 	/**
-	 * Filmdaten aktualisieren
+	 * aktualisiert die Volltextinformationen eines Films in der Datenbank
 	 *
 	 * @param Integer $imdb_id IMDb-ID
-	 * @param Array $custom zu aktualisierende Filmdaten
 	 */
-	function updateMovie ( $imdb_id, $custom )
+	private function updateFulltext ( $imdb_id )
 	{
-		if ( !isAdmin() ) return;
+		$movie = $this -> getSingleMovie ( $imdb_id );
 
-		global $collection;
+		$fulltext = $this -> getFulltext ( $movie );
 
-		$imdb_id = intval ( $imdb_id );
-
-		$collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
-								array ( '$set' => $custom ) );
-
-		// Volltextindex aktualisieren
-		$movie = getSingleMovie ( $imdb_id );
-
-		updateFulltext ( $movie );
-
-		$collection -> update ( array ( 'imdb.imdb_id' => $imdb_id ),
-								array ( '$set' => array ( 'fulltext' => $movie [ 'fulltext' ] ) ) );
+		$this -> results ( 'UPDATE movie SET fulltext = :fulltext WHERE imdb_id = :imdb_id',
+			array (
+				'$fulltext' => $fulltext,
+				'@imdb_id'  => $imdb_id
+			)
+		);
 	}
 
 	/**
-	 * Volltextindex eines Films erzeugen/aktualisieren
+	 * Volltextindex eines Films erzeugen
 	 *
 	 * @param Array $movie MongoDB-Filmdaten
 	 */
-	function updateFulltext ( &$movie )
+	private function getFulltext ( &$movie )
 	{
 		// alle zu indizierenden Felder zusammensuchen
 
-		$fulltext = $movie [ 'imdb' ][ 'title_orig' ] . ' '
-				  . $movie [ 'imdb' ][ 'title_deu'  ] . ' '
-				  . implode ( ' ', $movie [ 'imdb' ][ 'director' ] ) . ' '
-				  . implode ( ' ', $movie [ 'imdb' ][ 'cast'     ] ) . ' '
-				  . $movie [ 'custom' ][ 'notes' ];
+		$fulltext[] = $movie [ 'imdb_title_orig' ];
+		$fulltext[] = $movie [ 'imdb_title_deu'  ];
+		$fulltext[] = $movie [ 'custom_notes'    ];
 
-		$fulltext = _transliterate ( $fulltext );
+		// Genres
+		foreach ( $movie [ 'genres' ] as $genre )
+			$fulltext[] = $genre [ 'name' ];
+
+		// Cast
+		foreach ( $movie [ 'cast' ] as $cast )
+			$fulltext[] = $cast [ 'name' ];
+
+		// Director
+		foreach ( $movie [ 'director' ] as $director )
+			$fulltext[] = $director [ 'name' ];
 
 		// jedes Wort nur einmal
-		$fulltext = array_unique ( explode ( ' ', $fulltext ) );
+		$fulltext = array_unique ( $fulltext );
 
-		// array_values hier, damit die Elemente ohne Lücken durchnummeriert
-		// sind, andernfalls kann die MongoDB darin nicht vernünftig suchen
-		$movie [ 'fulltext' ] = array_values ( $fulltext );
+		// Worte normalisieren
+		$fulltext = $this -> _transliterate ( implode ( ' ', $fulltext ) );
+
+		return $fulltext;
 	}
 
 	/**
@@ -450,7 +507,7 @@ class sqlitedb extends SQLite3
 	 * @param String $string Zeichenkette
 	 * @return String normalisierte Zeichenkette
 	 */
-	function _transliterate ( $string )
+	private function _transliterate ( $string )
 	{
 		setlocale ( 'LC_ALL', 'de_DE' );
 

@@ -11,14 +11,18 @@ function getBechdelInfo ( $imdb_id )
 		if ( empty ( $info -> status ) )
 		{
 			return array (
-				'id'      => (int) $info -> id,
-				'rating'  => (int) $info -> rating,
-				'dubious' =>       $info -> dubious ? 1 : 0
+				'@bechdel_id'      => (int) $info -> id,
+				'@bechdel_rating'  => (int) $info -> rating,
+				'@bechdel_dubious' =>       $info -> dubious ? 1 : 0
 			);
 		}
 	}
 
-	return false;
+	return array (
+		'@bechdel_id'      => '',
+		'@bechdel_rating'  => '',
+		'@bechdel_dubious' => ''
+	);
 }
 
 function getBechdelIDs()

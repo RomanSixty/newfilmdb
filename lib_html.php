@@ -160,13 +160,15 @@ function getMovieDetails ( $imdb_id )
 	if (    empty ( $movie [ 'custom_notes'   ] )
          && empty ( $movie [ 'custom_quality' ] ) )
 		$movie [ 'NOTES_QUALITY' ] = false;
+	else
+		$movie [ 'NOTES_QUALITY' ] = true;
 
 	// wir zeigen maximal 5 Regisseure,
 	// davon maximal 3 ohne weitere Filme in der Datenbank
 	$directnum = $directshown = 0;
     foreach ( $movie [ 'director' ] as $key => $director )
     {
-        if ( $directshown < 5 && ( $num = $db -> directorMovieCount ( $director [ 'id' ] ) ) > 1 )
+        if ( $directshown < 5 && ( $num = $db -> castMovieCount ( $director [ 'id' ], 'director2movie' ) ) > 1 )
 		{
 			$movie [ 'director' ][ $key ][ 'moviecount' ] = $num;
 			$directshown++;
@@ -182,7 +184,7 @@ function getMovieDetails ( $imdb_id )
     $actnum = $actshown = 0;
     foreach ( $movie [ 'cast' ] as $key => $actor )
     {
-        if ( $actshown < 30 && ( $num = $db -> castMovieCount ( $actor [ 'id' ] ) ) > 1 )
+        if ( $actshown < 30 && ( $num = $db -> castMovieCount ( $actor [ 'id' ], 'cast2movie' ) ) > 1 )
         {
 			$movie [ 'cast' ][ $key ][ 'moviecount' ] = $num;
             $actshown++;
@@ -210,9 +212,11 @@ function getMovieDetails ( $imdb_id )
  */
 function getEditForm ( $imdb_id, $edit = true )
 {
+	global $db;
+
     if ( $edit )
     {
-        $movie = getSingleMovie ( $imdb_id );
+        $movie = $db -> getSingleMovie ( $imdb_id );
 
         $snippet = '<h2>Film bearbeiten</h2>';
     }
@@ -224,7 +228,7 @@ function getEditForm ( $imdb_id, $edit = true )
     if ( $edit )
     {
         $snippet .= '<input type="hidden" name="act" value="save_movie" />';
-        $snippet .= '<input type="hidden" name="imdb_id" value="' . $movie [ 'imdb' ][ 'imdb_id' ] . '" />';
+        $snippet .= '<input type="hidden" name="imdb_id" value="' . $movie [ 'imdb_id' ] . '" />';
     }
     else
     {
@@ -243,15 +247,15 @@ function getEditForm ( $imdb_id, $edit = true )
 
     $languages = array ( 'deu' => 'deutsch',
                          'eng' => 'englisch',
-                         'OmU' => 'Untertitel' );
+                         'omu' => 'Untertitel' );
 
     foreach ( $languages as $lang => $label )
     {
-        $checked = ( in_array ( $lang, $movie [ 'custom' ][ 'languages' ] ) )
+        $checked = ( !empty ( $movie [ 'language_' . $lang ] ) )
                  ? ' checked="checked"'
                  : '';
 
-        $snippet .= '<input type="checkbox" id="' . $lang . '" name="custom[languages][]" value="' . $lang . '"' . $checked . '/>';
+        $snippet .= '<input type="checkbox" id="' . $lang . '" name="language_' . $lang . '" value="1"' . $checked . '/>';
         $snippet .= '<label for="' . $lang . '">' . $label . '</label>';
     }
 
@@ -264,11 +268,11 @@ function getEditForm ( $imdb_id, $edit = true )
 
     foreach ( array ( 0,1,2,3,4,5,6,7,8,9,10 ) as $rating )
     {
-        $checked = ( $movie [ 'custom' ][ 'rating' ] == $rating )
+        $checked = ( $movie [ 'custom_rating' ] == $rating )
                  ? ' checked="checked"'
                  : '';
 
-        $snippet .= '<input type="radio" id="r' . $rating . '" name="custom[rating]" value="' . $rating . '"' . $checked . '/>';
+        $snippet .= '<input type="radio" id="r' . $rating . '" name="custom_rating" value="' . $rating . '"' . $checked . '/>';
         $snippet .= '<label for="r' . $rating . '">' . $rating . '</label>';
     }
 
@@ -278,14 +282,14 @@ function getEditForm ( $imdb_id, $edit = true )
 
     $snippet .= '<fieldset>';
     $snippet .= '<legend><label for="notes">Bemerkungen:</label></legend>';
-    $snippet .= '<textarea id="notes" name="custom[notes]">' . $movie [ 'custom' ][ 'notes' ] . '</textarea>';
+    $snippet .= '<textarea id="notes" name="custom_notes">' . $movie [ 'custom_notes' ] . '</textarea>';
     $snippet .= '</fieldset>';
 
     // Qualität
 
     $snippet .= '<fieldset>';
     $snippet .= '<legend><label for="quality">Qualität:</label></legend>';
-    $snippet .= '<textarea id="quality" name="custom[quality]">' . $movie [ 'custom' ][ 'quality' ] . '</textarea>';
+    $snippet .= '<textarea id="quality" name="custom_quality">' . $movie [ 'custom_quality' ] . '</textarea>';
     $snippet .= '</fieldset>';
 
     $snippet .= '<input type="button" class="button abort" value="abbrechen" data-imdbid="' . $imdb_id . '" />';

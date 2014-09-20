@@ -26,8 +26,9 @@ CREATE TABLE IF NOT EXISTS "cast" (
 );
 
 CREATE TABLE IF NOT EXISTS "cast2movie" (
-	"cast_id" INTEGER NOT NULL ,
-	"imdb_id" INTEGER NOT NULL
+	"cast_id" INTEGER NOT NULL,
+	"imdb_id" INTEGER NOT NULL,
+	"sort" INTEGER NOT NULL DEFAULT 0
 );
 CREATE        INDEX IF NOT EXISTS "actor_id"      ON "cast2movie" ("cast_id" ASC);
 CREATE        INDEX IF NOT EXISTS "actor_imdb_id" ON "cast2movie" ("imdb_id" ASC);
@@ -35,7 +36,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS "actor_both"    ON "cast2movie" ("cast_id" ASC
 
 CREATE TABLE IF NOT EXISTS "director2movie" (
 	"cast_id" INTEGER NOT NULL,
-	"imdb_id" INTEGER NOT NULL
+	"imdb_id" INTEGER NOT NULL,
+	"sort" INTEGER NOT NULL DEFAULT 0
 );
 CREATE        INDEX IF NOT EXISTS "director_id"      ON "director2movie" ("cast_id" ASC);
 CREATE        INDEX IF NOT EXISTS "director_imdb_id" ON "director2movie" ("imdb_id" ASC);

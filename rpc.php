@@ -12,74 +12,67 @@ require ( 'lib_imdb.php' );
 
 $db = new sqlitedb();
 
-/**
- * Filmliste basierend auf REQUEST-Parametern zurückgeben
- *
- * @param Array $p REQUEST-Parameter
- * @return String HTML-Code der Filmliste
- */
-function rpc_filter ( $p )
-{
-	global $db;
-
-	$movies = $db -> getMovieList ( $db -> getFilters ( $p ) );
-
-	$html = '';
-
-	foreach ( $movies as $movie )
-		$html .= getMovieSnippet ( $movie );
-
-	return array ( 'count' => count ( $movies ),
-				   'html'  => $html );
-}
-
 if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
 {
 	case 'add_movie':
 		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
 
 		if (    empty ( $imdb_id )
-			 || empty ( $_REQUEST [ 'custom' ][ 'languages' ] ) )
+			 || (    empty ( $_REQUEST [ 'language_deu' ] )
+				  && empty ( $_REQUEST [ 'language_eng' ] )
+				  && empty ( $_REQUEST [ 'language_omu' ] ) ) )
 		{
 			$return = getEditForm();
+
 			break;
 		}
 		else
 		{
-			$movie = getMovie ( $imdb_id );
+			$movie = array (
+				'@language_deu'   => $_REQUEST [ 'language_deu'   ],
+				'@language_eng'   => $_REQUEST [ 'language_eng'   ],
+				'@language_omu'   => $_REQUEST [ 'language_omu'   ],
+				'@custom_rating'  => $_REQUEST [ 'custom_rating'  ],
+				'$custom_notes'   => $_REQUEST [ 'custom_notes'   ],
+				'$custom_quality' => $_REQUEST [ 'custom_quality' ],
+			);
+
+			$movie = array_merge ( $movie, getIMDbMovie ( $imdb_id ) );
 
 			// Bechdel-Daten ergänzen
-			if ( false !== ( $bechdel_info = getBechdelInfo ( $imdb_id ) ) )
-				$movie [ 'bechdel' ] = $bechdel_info;
+			$movie = array_merge ( $movie, getBechdelInfo ( $imdb_id ) );
 
-			insertMovie ( $movie );
+			$db -> saveMovie ( $movie );
 		}
 
-		// kein break...
+		$return = getMovieDetails ( $imdb_id );
+
+		break;
 
 	case 'save_movie':
 		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
 
 		if ( !empty ( $imdb_id ) )
-			updateMovie ( $imdb_id,
-						  array ( 'custom' => $_REQUEST [ 'custom' ] ) );
+			$db -> updateMovie ( $_REQUEST );
 
-		// kein break...
+		$return = getMovieDetails ( $imdb_id );
+
+		break;
 
 	case 'update_imdb':
 
-		// Extra-IF, weil das hier sonst auch in den beiden bisherigen
-		// Fällen ausgeführt wird (da kein break)
+		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
 
-		if ( $_REQUEST [ 'act' ] == 'update_imdb' )
-		{
-			$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
+		$movie = array_merge ( $db -> getSingleMovie ( $imdb_id ), getIMDbMovie ( $imdb_id ), getBechdelInfo ( $imdb_id ) );
 
-			$movie = getMovie ( $imdb_id );
+		$movie [ '@language_deu'   ] = $movie [ 'language_deu'   ];
+		$movie [ '@language_eng'   ] = $movie [ 'language_eng'   ];
+		$movie [ '@language_omu'   ] = $movie [ 'language_omu'   ];
+		$movie [ '@custom_rating'  ] = $movie [ 'custom_rating'  ];
+		$movie [ '$custom_notes'   ] = $movie [ 'custom_notes'   ];
+		$movie [ '$custom_quality' ] = $movie [ 'custom_quality' ];
 
-			updateMovie ( $imdb_id,
-						  array ( 'imdb' => $movie [ 'imdb' ] ) );
-		}
+		$db -> saveMovie ( $movie );
 
 		// kein break...
 
@@ -96,7 +89,17 @@ if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
 		break;
 }
 else
-	$return = rpc_filter ( $_REQUEST );
+{
+	$movies = $db -> getMovieList ( $db -> getFilters ( $_REQUEST ) );
+
+	$html = '';
+
+	foreach ( $movies as $movie )
+		$html .= getMovieSnippet ( $movie );
+
+	$return = array ( 'count' => count ( $movies ),
+				      'html'  => $html );
+}
 
 if ( !empty ( $return ) )
 {

@@ -16,7 +16,7 @@ chdir ( 'imdbphp' );
  * @param Integer $imdb_id
  * @return Array Filmdaten
  */
-function getMovie ( $imdb_id )
+function getIMDbMovie ( $imdb_id )
 {
 	$movie = new imdb ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
 
@@ -48,28 +48,19 @@ function getMovie ( $imdb_id )
 
 	return array
 	(
-		'imdb' => array
-		(
-			'imdb_id'    => intval ( $imdb_id ),
-			'title_orig' => _charsetPrepare ( $title_orig ),
-			'title_deu'  => _charsetPrepare ( $title_deu ),
-			'year'       => $movie->year(),
-			'runtime'    => intval ( $movie->runtime() ),
-			'rating'     => $movie->rating(),
-			'genres'     => $movie->genres(),
-			'director'   => $directors,
-			'cast'       => $actors,
-			'plot'       => _charsetPrepare ( $movie->plotoutline() ),
-			'photo'      => $movie->photo_localurl()
-		),
-		'custom' => array
-		(
-			'rating'     => 0,
-			'languages'  => array(),
-			'notes'      => '',
-			'qualitaet'  => ''
-		),
-		'fulltext'       => ''
+		'@imdb_id'    => intval ( $imdb_id ),
+		'$imdb_photo'      => $movie->photo_localurl(),
+		'$imdb_plot'       => _charsetPrepare ( $movie->plotoutline() ),
+		'$imdb_rating'     => $movie->rating(),
+		'@imdb_runtime'    => intval ( $movie->runtime() ),
+		'$imdb_title_deu'  => _charsetPrepare ( $title_deu ),
+		'$imdb_title_orig' => _charsetPrepare ( $title_orig ),
+		'@imdb_year'       => $movie->year(),
+		'$fulltext'        => '',
+
+		'genres'     => $movie->genres(),
+		'director'   => $directors,
+		'cast'       => $actors
    );
 }
 
