@@ -95,7 +95,6 @@ $(function(){
 				data: 'act=update_imdb&imdb_id=' + imdb_id,
 				success: function(data) {
 					$('#details').html(data);
-					initDetails();
 				}
 			});
 
@@ -111,7 +110,6 @@ $(function(){
 			data: 'act=details&imdb_id=' + imdb_id,
 			success: function(data) {
 				$('#details').html(data);
-				initDetails();
 			}
 		});
 	});
@@ -138,7 +136,6 @@ function initForm()
 
 				// da wir nicht wissen, ob hier eine Detailansicht
 				// oder ein Formular zurückkommt, machen wir beides
-				initDetails();
 				initForm();
 			}
 		});
