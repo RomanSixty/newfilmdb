@@ -1,4 +1,4 @@
-This project is a custom built movie database for my collection. You are witnessing my first steps into new database territory here since I've used MongoDB as backend storage for movie data.
+This project is a custom built movie database for my collection. I started out using MondoDB as database backend but found that using a technology I don't use in everyday work didn't help my motivation in implementing features. Therefore I switched to SQLite.
 
 Features:
 
@@ -18,7 +18,6 @@ Other requirements (not contained):
 
   * IMDBPHP2 (http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper,
     configured as submodule in directory "imdbphp/"
-  * PECL::mongo (MongoDB database driver)
   * PECL::intl (for correct utf82ascii-transliterations)
 
 - LX
