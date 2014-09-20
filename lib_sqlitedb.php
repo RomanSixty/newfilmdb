@@ -412,6 +412,44 @@ class sqlitedb extends SQLite3
 	}
 
 	/**
+	 * besorgt eine Liste aller in der DB vorhandenen Genres
+	 * mit zugehöriger Anzahl der Filme dieses Genres
+	 *
+	 * @return Array Genreliste
+	 */
+	public function getGenreList()
+	{
+		return $this -> results ( 'SELECT
+				g.genre_id,
+				genre,
+				COUNT(g2m.imdb_id) AS cnt
+			FROM genre g
+			LEFT JOIN genre2movie g2m ON g2m.genre_id=g.genre_id
+			GROUP BY g2m.genre_id
+			ORDER BY COUNT(g2m.imdb_id) DESC' );
+	}
+
+	/**
+	 * besorgt eine Liste der 20 aktivsten Cast-Mitglieder
+	 * mit zugehöriger Anzahl der Filme
+	 *
+	 * @param String $table director2movie | cast2movie
+	 * @return Array Cast-Liste
+	 */
+	public function getCastList ( $table )
+	{
+		return $this -> results ( 'SELECT
+				c.cast_id,
+				"cast",
+				COUNT(x2m.imdb_id) AS cnt
+			FROM "cast" c
+			LEFT JOIN ' . $table . ' x2m ON x2m.cast_id=c.cast_id
+			GROUP BY x2m.cast_id
+			ORDER BY COUNT(x2m.imdb_id) DESC
+			LIMIT 20' );
+	}
+
+	/**
 	 * SQLite-Wrapper für Queries mit Parametern
 	 *
 	 * @param String $sql SQL-Query mit ggf. Platzhaltern

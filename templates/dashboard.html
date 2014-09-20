@@ -45,14 +45,38 @@
 
 		<section class="filter">
 			<label id="genre" class="section">Genre:</label>
+
+			<ul class="dropdown list_genre">
+			{{{LOOP_genres
+				<li data-count="%%%genres.cnt%%%">
+					<a href="#" data-id="%%%genres.genre_id%%%">%%%genres.genre%%%</a>
+				</li>
+			}}}
+			</ul>
 		</section>
 
 		<section class="filter">
 			<label id="director" class="section">Regie:</label>
+
+			<ul class="dropdown list_director">
+			{{{LOOP_directors
+				<li data-count="%%%directors.cnt%%%">
+					<a href="#" data-id="%%%directors.cast_id%%%">%%%directors.cast%%%</a>
+				</li>
+			}}}
+			</ul>
 		</section>
 
 		<section class="filter">
 			<label id="cast" class="section">Cast:</label>
+
+			<ul class="dropdown list_actor">
+			{{{LOOP_cast
+				<li data-count="%%%cast.cnt%%%">
+					<a href="#" data-id="%%%cast.cast_id%%%">%%%cast.cast%%%</a>
+				</li>
+			}}}
+			</ul>
 		</section>
 
 	</form>

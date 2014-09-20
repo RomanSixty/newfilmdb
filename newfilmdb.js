@@ -1,31 +1,108 @@
-function initDashbar()
-{
-	$('#searchform').submit(function(){
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'json',
-			data: $('#searchform').serialize(),
-			success: function(data) {
-				$('#list').html(data.html);
-				$('#num_results').html(data.count);
-				initContent();
-			}
-		});
-		return false;
-	});
+$(function(){
 
-	$('.check').click(function(){
+	/* Dashbar */
+
+	$('#searchform')
+		.on('submit', function(){
+			$.ajax({
+				url: 'rpc.php',
+				dataType: 'json',
+				data: $('#searchform').serialize(),
+				success: function(data) {
+					$('#list').html(data.html);
+					$('#num_results').html(data.count);
+					initContent();
+				}
+			});
+			return false;
+		})
+		.on('click', '.list_genre a', function(){
+			genreFilter( $(this) );
+
+			return false;
+		})
+		.on('click', '.list_director a', function(e){
+			directorFilter ( e, $(this) );
+
+			return false;
+		})
+		.on('click', '.list_actor a', function(e){
+			actorFilter ( e, $(this) );
+
+			return false;
+		});
+
+	$('.checkbutton .check').on('click', function(){
 		$('#searchform').submit();
 	});
-}
 
-function initContent()
-{
-	$('img.delay').lazyload({
-		effect: 'fadeIn'
-	});
+	/* Details */
 
-	$('.movie').click(function(){
+	$('#details')
+		.on('click', '.genre a', function(){
+			genreFilter( $(this) );
+
+			return false;
+		})
+		.on('click', 'ul.directors a', function(e){
+			directorFilter ( e, $(this) );
+
+			return false;
+		})
+		.on('click', 'ul.actors a', function(e){
+			actorFilter ( e, $(this) );
+
+			return false;
+		})
+		.on('click', '.editlink', function(){
+			var imdb_id = $(this).attr('data-imdbid');
+
+			$.ajax({
+				url: 'rpc.php',
+				dataType: 'html',
+				data: 'act=edit&imdb_id=' + imdb_id,
+				success: function(data) {
+					$('#details .associated').html(data);
+					initForm();
+				}
+			});
+
+			return false;
+		})
+		.on('click', '.addlink', function(){
+			var imdb_id = $(this).attr('data-imdbid');
+
+			$.ajax({
+				url: 'rpc.php',
+				dataType: 'html',
+				data: 'act=add&imdb_id=' + imdb_id,
+				success: function(data) {
+					$('#details').html(data);
+					initForm();
+				}
+			});
+
+			return false;
+		})
+		.on('click', '.updatelink', function(){
+			$('#details').append('<div id="overlay"></div>');
+
+			var imdb_id = $(this).attr('data-imdbid');
+
+			$.ajax({
+				url: 'rpc.php',
+				dataType: 'html',
+				data: 'act=update_imdb&imdb_id=' + imdb_id,
+				success: function(data) {
+					$('#details').html(data);
+					initDetails();
+				}
+			});
+
+			return false;
+		});
+
+	$('#list').on('click', '.movie', function(){
 		var imdb_id = $(this).attr('data-imdbid');
 
 		$.ajax({
@@ -37,6 +114,13 @@ function initContent()
 				initDetails();
 			}
 		});
+	});
+});
+
+function initContent()
+{
+	$('img.delay').lazyload({
+		effect: 'fadeIn'
 	});
 }
 
@@ -72,127 +156,8 @@ function initForm()
 			data: 'act=details&imdb_id=' + imdb_id,
 			success: function(data) {
 				$('#details').html(data);
-				initDetails();
 			}
 		});
-	});
-}
-
-function initDetails()
-{
-	$('#details .genre a').click(function(){
-		timest = +new Date();
-
-		filterid = 'genre' + timest;
-
-		html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + $(this).data('id') + '" />';
-		html += '<label class="filter" for="' + filterid + '">' + $(this).html() + '</label>';
-
-		$('label[id=genre]').after(html);
-		initFilter ( filterid );
-
-		$('input#dir').remove();
-		$('label[for=dir]').remove();
-		$('#fulltext').val('');
-		$('#searchform').submit();
-	});
-
-	$('#details ul.directors a').click(function(e){
-		if ( !e.shiftKey )
-		{
-			$('#dashboard .act_filter').remove();
-			$('#dir').remove();
-			$('label[for=dir]').remove();
-		}
-
-		timest = +new Date();
-
-		filterid = 'dir' + timest;
-
-		html  = '<input id="' + filterid + '" type="hidden" name="director[]" value="' + $(this).data('id') + '" />';
-		html += '<label class="filter" for="' + filterid + '">' + $(this).html() + '</label>';
-
-		$('label[id=director]').after(html);
-		initFilter ( filterid );
-
-		$('#fulltext').val('');
-		$('#searchform').submit();
-
-		return false;
-	});
-
-	$('#details ul.actors a').click(function(e){
-		if ( !e.shiftKey )
-		{
-			$('#dashboard .act_filter').remove();
-			$('#dir').remove();
-			$('label[for=dir]').remove();
-		}
-
-		timest = +new Date();
-
-		filterid = 'act' + timest;
-
-		html  = '<input class="act_filter" id="' + filterid + '" type="hidden" name="cast[]" value="' + $(this).data('id') + '" />';
-		html += '<label class="filter act_filter" for="' + filterid + '">' + $(this).html() + '</label>';
-
-		$('label[id=cast]').after(html);
-		initFilter ( filterid );
-
-		$('#fulltext').val('');
-		$('#searchform').submit();
-
-		return false;
-	});
-
-	$('#details .editlink').click(function(){
-		var imdb_id = $(this).attr('data-imdbid');
-
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'html',
-			data: 'act=edit&imdb_id=' + imdb_id,
-			success: function(data) {
-				$('#details .associated').html(data);
-				initForm();
-			}
-		});
-
-		return false;
-	});
-
-	$('#details .addlink').click(function(){
-		var imdb_id = $(this).attr('data-imdbid');
-
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'html',
-			data: 'act=add&imdb_id=' + imdb_id,
-			success: function(data) {
-				$('#details').html(data);
-				initForm();
-			}
-		});
-
-		return false;
-	});
-
-	$('#details .updatelink').click(function(){
-		$('#details').append('<div id="overlay"></div>');
-
-		var imdb_id = $(this).attr('data-imdbid');
-
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'html',
-			data: 'act=update_imdb&imdb_id=' + imdb_id,
-			success: function(data) {
-				$('#details').html(data);
-				initDetails();
-			}
-		});
-
-		return false;
 	});
 }
 
@@ -206,6 +171,68 @@ function initFilter ( id )
 	});
 }
 
-initDashbar();
+function genreFilter ( $el )
+{
+	timest = +new Date();
+
+	filterid = 'genre' + timest;
+
+	html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + $el.data('id') + '" />';
+	html += '<label class="filter" for="' + filterid + '">' + $el.html() + '</label>';
+
+	$('label[id=genre]').after(html);
+	initFilter ( filterid );
+
+	$('input#dir').remove();
+	$('label[for=dir]').remove();
+	$('#fulltext').val('');
+	$('#searchform').submit();
+}
+
+function directorFilter ( e, $el )
+{
+	if ( !e.shiftKey )
+	{
+		$('#dashboard .act_filter').remove();
+		$('#dir').remove();
+		$('label[for=dir]').remove();
+	}
+
+	timest = +new Date();
+
+	filterid = 'dir' + timest;
+
+	html  = '<input id="' + filterid + '" type="hidden" name="director[]" value="' + $el.data('id') + '" />';
+	html += '<label class="filter" for="' + filterid + '">' + $el.html() + '</label>';
+
+	$('label[id=director]').after(html);
+	initFilter ( filterid );
+
+	$('#fulltext').val('');
+	$('#searchform').submit();
+}
+
+function actorFilter ( e, $el )
+{
+	if ( !e.shiftKey )
+	{
+		$('#dashboard .act_filter').remove();
+		$('#dir').remove();
+		$('label[for=dir]').remove();
+	}
+
+	timest = +new Date();
+
+	filterid = 'act' + timest;
+
+	html  = '<input class="act_filter" id="' + filterid + '" type="hidden" name="cast[]" value="' + $el.data('id') + '" />';
+	html += '<label class="filter act_filter" for="' + filterid + '">' + $el.html() + '</label>';
+
+	$('label[id=cast]').after(html);
+	initFilter ( filterid );
+
+	$('#fulltext').val('');
+	$('#searchform').submit();
+}
+
 initContent();
-initDetails();

@@ -105,9 +105,16 @@ function getBestImage ( $movie )
  */
 function getDashboard ( $count = 0 )
 {
+	global $db;
+
 	$template = file_get_contents ( dirname ( __FILE__ ) . '/templates/dashboard.html' );
 
-	$replacements = array ( 'COUNT' => $count );
+	$replacements = array (
+		'COUNT'     => $count,
+		'genres'    => $db -> getGenreList(),
+		'directors' => $db -> getCastList ( 'director2movie' ),
+		'cast'      => $db -> getCastList ( 'cast2movie'     )
+	);
 
     return templateReplacements ( $template, $replacements );
 }
@@ -127,7 +134,7 @@ function getMovieSnippet ( $movie )
     $replacements [ 'PHOTO' ] = getBestImage ( $movie );
 
     // Rating bestimmen
-	if ( !empty ( $movie [ 'rating' ] ) )
+	if ( !empty ( $movie [ 'custom_rating' ] ) )
 		$replacements [ 'RATING' ] = $movie [ 'custom_rating' ].'/10';
 	else
 		$replacements [ 'RATING' ] = 'noch keine Wertung';
