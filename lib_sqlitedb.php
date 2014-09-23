@@ -461,8 +461,10 @@ class sqlitedb extends SQLite3
 			FROM "cast" c
 			LEFT JOIN ' . $table . ' x2m ON x2m.cast_id=c.cast_id
 			GROUP BY x2m.cast_id
-			ORDER BY COUNT(x2m.imdb_id) DESC
-			LIMIT 20' );
+			ORDER BY
+				COUNT(x2m.imdb_id) DESC,
+				AVG(x2m.sort) ASC
+			LIMIT 25' );
 	}
 
 	/**
