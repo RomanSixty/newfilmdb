@@ -180,8 +180,6 @@ function genreFilter ( $el )
 	$('label[id=genre]').after(html);
 	initFilter ( filterid );
 
-	$('input#dir').remove();
-	$('label[for=dir]').remove();
 	$('#fulltext').val('');
 	$('#searchform').submit();
 }
@@ -189,17 +187,13 @@ function genreFilter ( $el )
 function directorFilter ( e, $el )
 {
 	if ( !e.shiftKey )
-	{
-		$('#dashboard .act_filter').remove();
-		$('#dir').remove();
-		$('label[for=dir]').remove();
-	}
+		$('#dashboard .dir_filter').remove();
 
 	timest = +new Date();
 
 	filterid = 'dir' + timest;
 
-	html  = '<input id="' + filterid + '" type="hidden" name="director[]" value="' + $el.data('id') + '" />';
+	html  = '<input class="dir_filter" id="' + filterid + '" type="hidden" name="director[]" value="' + $el.data('id') + '" />';
 	html += '<label class="filter" for="' + filterid + '">' + $el.html() + '</label>';
 
 	$('label[id=director]').after(html);
@@ -212,11 +206,7 @@ function directorFilter ( e, $el )
 function actorFilter ( e, $el )
 {
 	if ( !e.shiftKey )
-	{
 		$('#dashboard .act_filter').remove();
-		$('#dir').remove();
-		$('label[for=dir]').remove();
-	}
 
 	timest = +new Date();
 
