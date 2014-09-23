@@ -280,10 +280,15 @@ class sqlitedb extends SQLite3
 		// Volltextsuche
 		if ( !empty ( $form [ 'fulltext' ] ) )
 		{
-			$terms = explode ( ' ', $this -> _transliterate ( $form [ 'fulltext' ] ) );
+			if ( is_numeric ( $form [ 'fulltext' ] ) )
+				$where[] = 'm.imdb_id=' . intval ( $form [ 'fulltext' ] );
+			else
+			{
+				$terms = explode ( ' ', $this -> _transliterate ( $form [ 'fulltext' ] ) );
 
-			foreach ( $terms as $term )
-				$where[] = 'm.fulltext LIKE "%' . $term . '%"';
+				foreach ( $terms as $term )
+					$where[] = 'm.fulltext LIKE "%' . $term . '%"';
+			}
 		}
 
 		// Sprachfilter (ODER)
