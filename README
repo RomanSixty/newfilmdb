@@ -18,6 +18,7 @@ Other requirements (not contained):
 
   * IMDBPHP2 (http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper,
     configured as submodule in directory "imdbphp/"
+    you can clone this repository: git@github.com:tboothman/imdbphp.git
   * PECL::intl (for correct utf82ascii-transliterations)
 
 - LX
