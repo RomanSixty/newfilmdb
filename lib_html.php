@@ -198,8 +198,11 @@ function getMovieDetails ( $imdb_id )
         }
         elseif ( $actnum >= 5 )
             unset ( $movie [ 'cast' ][ $key ] );
-
-        $actnum++;
+		else
+		{
+			$actnum++;
+			$actshown++;
+		}
     }
 
 	if ( !empty ( $movie [ 'bechdel_id' ] ) )
