@@ -69,12 +69,23 @@ class sqlitedb extends SQLite3
 		$sort   = 0;
 		$values = array();
 
-		foreach ( $arr_cast as $cast_id )
+		// damit die Statements nicht zu groß werden, nur 100 pro Schwung
+		while ( $cast_id = array_shift ( $arr_cast ) )
+		{
 			$values[] = '(' . $cast_id . ', ' . $imdb_id . ', ' . $sort++ . ')';
 
-		$sql .= implode ( ',', $values );
+			if ( count ( $values ) < 100 )
+				continue;
+			else
+			{
+				$this -> exec ( $sql . implode ( ',', $values ) );
 
-		$this -> exec ( $sql );
+				$values = array();
+			}
+		}
+
+		// die restlichen
+		$this -> exec ( $sql . implode ( ',', $values ) );
 	}
 
 	/**
