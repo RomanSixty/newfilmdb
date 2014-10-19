@@ -367,7 +367,7 @@ class sqlitedb extends SQLite3
 
 		$sql = str_replace ( '%JOIN',  implode ( ' ', $filters [ 'joins' ] ),                $sql );
 		$sql = str_replace ( '%WHERE', 'WHERE ' . implode ( ' AND ', $filters [ 'where' ] ), $sql );
-		$sql = str_replace ( '%ORDER', 'ORDER BY custom_rating DESC, imdb_year DESC',        $sql );
+		$sql = str_replace ( '%ORDER', 'ORDER BY imdb_year DESC',                            $sql );
 
 		return $this -> results ( $sql );
 	}
