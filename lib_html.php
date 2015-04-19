@@ -163,8 +163,8 @@ function getMovieDetails ( $imdb_id )
 	$movie [ 'PHOTO'          ] = getBestImage ( $movie );
 	$movie [ 'IMDBID_PADDED'  ] = str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
 	$movie [ 'TITLE_DIFF'     ] = ( $movie [ 'imdb_title_orig' ] != $movie [ 'imdb_title_deu' ] );
-	$movie [ 'TITLE_DIFF_ENG' ] = (    $movie [ 'imdb_title_orig' ] != $movie [ 'imdb_title_eng' ]
-									&& $movie [ 'imdb_title_deu'  ] != $movie [ 'imdb_title_eng' ] );
+	$movie [ 'TITLE_DIFF_ENG' ] = (    strtolower ( $movie [ 'imdb_title_orig' ] ) != strtolower ( $movie [ 'imdb_title_eng' ] )
+									&& strtolower ( $movie [ 'imdb_title_deu'  ] ) != strtolower ( $movie [ 'imdb_title_eng' ] ) );
 
 	if (    empty ( $movie [ 'custom_notes'   ] )
          && empty ( $movie [ 'custom_quality' ] ) )
