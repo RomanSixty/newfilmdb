@@ -150,8 +150,10 @@ class sqlitedb extends SQLite3
 			imdb_photo,
 			imdb_plot,
 			imdb_rating,
+			imdb_top250,
 			imdb_runtime,
 			imdb_title_deu,
+			imdb_title_eng,
 			imdb_title_orig,
 			imdb_year,
 			language_deu,
@@ -168,8 +170,10 @@ class sqlitedb extends SQLite3
 			:imdb_photo,
 			:imdb_plot,
 			:imdb_rating,
+			:imdb_top250,
 			:imdb_runtime,
 			:imdb_title_deu,
+			:imdb_title_eng,
 			:imdb_title_orig,
 			:imdb_year,
 			:language_deu,
@@ -534,6 +538,7 @@ class sqlitedb extends SQLite3
 
 		$fulltext[] = $movie [ 'imdb_title_orig' ];
 		$fulltext[] = $movie [ 'imdb_title_deu'  ];
+		$fulltext[] = $movie [ 'imdb_title_eng'  ];
 		$fulltext[] = $movie [ 'custom_notes'    ];
 
 		// Genres
@@ -550,6 +555,10 @@ class sqlitedb extends SQLite3
 
 		// jedes Wort nur einmal
 		$fulltext = array_unique ( $fulltext );
+
+		// Top250?
+		if ( !empty ( $movie [ 'imdb_top250' ] ) )
+			$fulltext[] = 'Top250';
 
 		// Worte normalisieren
 		$fulltext = $this -> _transliterate ( implode ( ' ', $fulltext ) );

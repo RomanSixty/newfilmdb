@@ -26,6 +26,11 @@ h1, h2 {
 	font-variant: small-caps;
 }
 
+h1 .subtitle {
+	display: block;
+	font-size: .6em;
+}
+
 ul, li {
 	list-style-type: none;
 }

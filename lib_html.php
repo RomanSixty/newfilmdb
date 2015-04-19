@@ -159,10 +159,11 @@ function getMovieDetails ( $imdb_id )
 	$movie [ 'custom_notes'   ] = nl2br ( $movie [ 'custom_notes'   ] );
 	$movie [ 'custom_quality' ] = nl2br ( $movie [ 'custom_quality' ] );
 
-	$movie [ 'IS_ADMIN'      ] = $db -> isAdmin();
-	$movie [ 'PHOTO'         ] = getBestImage ( $movie );
-	$movie [ 'IMDBID_PADDED' ] = str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
-	$movie [ 'TITLE_DIFF'    ] = ( $movie [ 'imdb_title_orig' ] != $movie [ 'imdb_title_deu' ] );
+	$movie [ 'IS_ADMIN'       ] = $db -> isAdmin();
+	$movie [ 'PHOTO'          ] = getBestImage ( $movie );
+	$movie [ 'IMDBID_PADDED'  ] = str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
+	$movie [ 'TITLE_DIFF'     ] = ( $movie [ 'imdb_title_orig' ] != $movie [ 'imdb_title_deu' ] );
+	$movie [ 'TITLE_DIFF_ENG' ] = ( $movie [ 'imdb_title_orig' ] != $movie [ 'imdb_title_eng' ] );
 
 	if (    empty ( $movie [ 'custom_notes'   ] )
          && empty ( $movie [ 'custom_quality' ] ) )

@@ -1,5 +1,10 @@
 <header>
-	<h1>%%%imdb_title_orig%%%</h1>
+	<h1>
+		%%%imdb_title_orig%%%
+		{IF TITLE_DIFF_ENG}
+			<span class="subtitle">%%%imdb_title_eng%%%</span>
+		{ENDIF TITLE_DIFF_ENG}
+	</h1>
 </header>
 
 {IF IS_ADMIN}
@@ -31,6 +36,9 @@
     	{IF custom_rating}
 		<div class="star">%%%custom_rating%%%</div>
 		{ENDIF custom_rating}
+		{IF imdb_top250}
+		<div class="star">%%%imdb_top250%%%</div>
+		{ENDIF imdb_top250}
 
 		<dl>
 			<dt>Sprachen:</dd>

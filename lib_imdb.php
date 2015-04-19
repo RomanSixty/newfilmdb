@@ -20,23 +20,38 @@ function getIMDbMovie ( $imdb_id )
 {
 	$movie = new imdb ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
 
-	$title_orig = $movie->orig_title();
+	$title_orig = $title_eng = $movie->orig_title();
 
 	if ( empty ( $title_orig ) )
 		$title_orig = $movie->title();
 
 	// deutscher Titel
 	$title_deu = $movie -> title();
+	$deu_found = $eng_found = false;
 
 	foreach ( (array) $movie -> alsoknow() as $aka )
-		if (    $aka [ 'country' ] == 'Germany'
-			 || $aka [ 'country' ] == 'West Germany' )
+	{
+		if (    $deu_found === false
+			 && (    $aka [ 'country' ] == 'Germany'
+			      || $aka [ 'country' ] == 'West Germany' ) )
 		{
 			$title_deu = $aka [ 'title' ];
-			break;
+			$deu_found = true;
 		}
-		elseif ( $aka [ 'country' ] == 'International' )
+		elseif (    $deu_found === false
+				 && $aka [ 'country' ] == 'International' )
 			$title_deu = $aka [ 'title' ];
+		elseif (    $eng_found === false
+				 && $aka [ 'country' ] == 'World-wide'
+				 && $aka [ 'comment' ] == 'English title' )
+		{
+			$title_eng = $aka [ 'title' ];
+			$eng_found = true;
+		}
+		elseif (    $eng_found === false
+				 && $aka [ 'country' ] == 'USA' )
+			$title_eng = $aka [ 'title' ];
+	}
 
 	// Regisseur
 	foreach ( (array) $movie -> director() as $d )
@@ -52,9 +67,11 @@ function getIMDbMovie ( $imdb_id )
 		'$imdb_photo'      => $movie->photo_localurl(),
 		'$imdb_plot'       => _charsetPrepare ( $movie->plotoutline() ),
 		'$imdb_rating'     => $movie->rating(),
+		'@imdb_top250'     => intval ( $movie->top250() ),
 		'@imdb_runtime'    => intval ( $movie->runtime() ),
-		'$imdb_title_deu'  => _charsetPrepare ( $title_deu ),
+		'$imdb_title_deu'  => _charsetPrepare ( $title_deu  ),
 		'$imdb_title_orig' => _charsetPrepare ( $title_orig ),
+		'$imdb_title_eng'  => _charsetPrepare ( $title_eng  ),
 		'@imdb_year'       => $movie->year(),
 		'$fulltext'        => '',
 

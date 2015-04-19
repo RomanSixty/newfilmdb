@@ -53,3 +53,10 @@ CREATE TABLE IF NOT EXISTS "genre2movie" (
 	"imdb_id" INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS "genre_imdb_id" ON "genre2movie" ("imdb_id" ASC);
+
+
+-- Update 2015-02-08: Top250 position of a movie
+ALTER TABLE "movie" ADD COLUMN "imdb_top250" INTEGER;
+
+-- Update 2015-04-19: English title of a movie
+ALTER TABLE "movie" ADD COLUMN "imdb_title_eng" VARCHAR NOT NULL DEFAULT "";
