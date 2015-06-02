@@ -301,6 +301,21 @@ li[data-count]:after {
 	width: 66px;
 }
 
+#details .trophy {
+	background: url("./fdb_img/trophy.png") no-repeat scroll 0 0 transparent;
+	display: inline-block;
+	float: left;
+	font-family: Tahoma, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	height: 59px;
+	line-height: 45px;
+	padding-right: 5px;
+	text-align: center;
+	vertical-align: middle;
+	width: 59px;
+}
+
 #details span.csv:after {
 	content: ', ';
 }
