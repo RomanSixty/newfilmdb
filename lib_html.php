@@ -280,9 +280,9 @@ function getEditForm ( $imdb_id, $edit = true )
 
     foreach ( array ( 0,1,2,3,4,5,6,7,8,9,10 ) as $rating )
     {
-        $checked = ( $movie [ 'custom_rating' ] == $rating )
-                 ? ' checked="checked"'
-                 : '';
+		$checked = ( $edit && $movie [ 'custom_rating' ] == $rating )
+				 ? ' checked="checked"'
+				 : '';
 
         $snippet .= '<input type="radio" id="r' . $rating . '" name="custom_rating" value="' . $rating . '"' . $checked . '/>';
         $snippet .= '<label for="r' . $rating . '">' . $rating . '</label>';
@@ -294,14 +294,18 @@ function getEditForm ( $imdb_id, $edit = true )
 
     $snippet .= '<fieldset>';
     $snippet .= '<legend><label for="notes">Bemerkungen:</label></legend>';
-    $snippet .= '<textarea id="notes" name="custom_notes">' . $movie [ 'custom_notes' ] . '</textarea>';
+    $snippet .= '<textarea id="notes" name="custom_notes">';
+	if ( $edit ) $snippet .= $movie [ 'custom_notes' ];
+	$snippet .= '</textarea>';
     $snippet .= '</fieldset>';
 
     // Qualität
 
     $snippet .= '<fieldset>';
     $snippet .= '<legend><label for="quality">Qualität:</label></legend>';
-    $snippet .= '<textarea id="quality" name="custom_quality">' . $movie [ 'custom_quality' ] . '</textarea>';
+    $snippet .= '<textarea id="quality" name="custom_quality">';
+	if ( $edit ) $snippet .= $movie [ 'custom_quality' ];
+	$snippet .= '</textarea>';
     $snippet .= '</fieldset>';
 
     $snippet .= '<input type="button" class="button abort" value="abbrechen" data-imdbid="' . $imdb_id . '" />';
