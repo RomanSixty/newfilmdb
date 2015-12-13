@@ -369,6 +369,9 @@ class sqlitedb extends SQLite3
 
 		$filters [ 'where' ][] = '1=1';
 
+		if ( empty ( $filters [ 'joins' ] ) )
+			$filters [ 'joins' ] = array();
+
 		$sql = str_replace ( '%JOIN',  implode ( ' ', $filters [ 'joins' ] ),                $sql );
 		$sql = str_replace ( '%WHERE', 'WHERE ' . implode ( ' AND ', $filters [ 'where' ] ), $sql );
 		$sql = str_replace ( '%ORDER', 'ORDER BY imdb_year DESC',                            $sql );
