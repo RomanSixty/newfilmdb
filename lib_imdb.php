@@ -5,22 +5,23 @@
  * aus IMDBPHP die Filmdaten geladen und strukturiert werden
  */
 
-require("imdbphp/imdb.class.php");
-chdir ( 'imdbphp' );
+require ( 'imdbphp/bootstrap.php' );
+
 
 /**
  * holt zu einer IMDB-ID alle gewünschten Filmdaten
- * und packt sie in die passende Struktur für die
- * MongoDB
+ * und packt sie in die passende Struktur
  *
  * @param Integer $imdb_id
  * @return Array Filmdaten
  */
 function getIMDbMovie ( $imdb_id )
 {
-	$movie = new imdb ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
+	$movie = new \Imdb\Title ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
 
 	$title_orig = $title_eng = $movie->orig_title();
+
+	$directors = $actors = array();
 
 	if ( empty ( $title_orig ) )
 		$title_orig = $movie->title();
