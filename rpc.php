@@ -29,9 +29,9 @@ if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
 		else
 		{
 			$movie = array (
-				'@language_deu'   => $_REQUEST [ 'language_deu'   ],
-				'@language_eng'   => $_REQUEST [ 'language_eng'   ],
-				'@language_omu'   => $_REQUEST [ 'language_omu'   ],
+				'@language_deu'   => isset ( $_REQUEST [ 'language_deu'   ] ) ? $_REQUEST [ 'language_deu'   ] : '',
+				'@language_eng'   => isset ( $_REQUEST [ 'language_eng'   ] ) ? $_REQUEST [ 'language_eng'   ] : '',
+				'@language_omu'   => isset ( $_REQUEST [ 'language_omu'   ] ) ? $_REQUEST [ 'language_omu'   ] : '',
 				'@custom_rating'  => $_REQUEST [ 'custom_rating'  ],
 				'$custom_notes'   => $_REQUEST [ 'custom_notes'   ],
 				'$custom_quality' => $_REQUEST [ 'custom_quality' ],
