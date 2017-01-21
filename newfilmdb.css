@@ -41,13 +41,13 @@ dl {
 }
 
 .img img {
-	width: 200px;
+	width: 214px;
 }
 
 .img {
-	width: 200px;
+	width: 214px;
 	float: left;
-	height: 297px;
+	height: 317px;
 	overflow: hidden;
 }
 
@@ -71,12 +71,13 @@ li[data-count]:after {
 
 #list .movie {
 	float: left;
-	width: 200px;
-	height: 297px;
-	margin: 10px;
+	width: 214px;
+	height: 317px;
+	margin: 5px;
 	cursor: pointer;
 	position: relative;
-	background: url(./fdb_img/bg.jpg) no-repeat;
+	background: #fff;
+	box-shadow: 0 0 40px #000 inset;
 	border-radius: 7px;
 	border-top-left-radius: 0;
 	border-bottom-right-radius: 0;
@@ -233,7 +234,7 @@ li[data-count]:after {
 
 #details .main_details {
 	float: right;
-	width: 250px;
+	width: 240px;
 }
 
 #details h2 {
