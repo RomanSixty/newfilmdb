@@ -16,8 +16,8 @@ $(function(){
 			});
 			return false;
 		})
-		.on('click', '.list_genre a', function(){
-			genreFilter( $(this) );
+		.on('click', '.list_genre a', function(e){
+			genreFilter( e, $(this) );
 
 			return false;
 		})
@@ -39,8 +39,8 @@ $(function(){
 	/* Details */
 
 	$('#details')
-		.on('click', '.genre a', function(){
-			genreFilter( $(this) );
+		.on('click', '.genre a', function(e){
+			genreFilter( e, $(this) );
 
 			return false;
 		})
@@ -120,6 +120,10 @@ function initContent()
 	$('img.delay').lazyload({
 		effect: 'fadeIn'
 	});
+
+	$('.filter input').each(function(){
+		initFilter ( $(this).attr('id') );
+	});
 }
 
 function initForm()
@@ -168,14 +172,23 @@ function initFilter ( id )
 	});
 }
 
-function genreFilter ( $el )
+function genreFilter ( e, $el )
 {
+	var genre_id   = $el.data('id');
+	var genre_name = $el.html();
+
+	if ( e.shiftKey )
+	{
+		genre_id   = - genre_id;
+		genre_name = '-' + genre_name;
+	}
+
 	timest = +new Date();
 
 	filterid = 'genre' + timest;
 
-	html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + $el.data('id') + '" />';
-	html += '<label class="filter" for="' + filterid + '">' + $el.html() + '</label>';
+	html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + genre_id + '" />';
+	html += '<label class="filter" for="' + filterid + '">' + genre_name + '</label>';
 
 	$('label[id=genre]').after(html);
 	initFilter ( filterid );

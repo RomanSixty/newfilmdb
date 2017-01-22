@@ -335,8 +335,16 @@ class sqlitedb extends SQLite3
 			$idx = 0;
 			foreach ( $form [ 'genre' ] as $value )
 			{
-				$joins[] = 'LEFT JOIN genre2movie g2m_'.$idx.' ON g2m_'.$idx.'.imdb_id=m.imdb_id';
-				$where[] = 'g2m_'.$idx.'.genre_id=' . intval ( $value );
+				if ( $value > 0 )
+				{
+					$joins[] = 'LEFT JOIN genre2movie g2m_'.$idx.' ON g2m_'.$idx.'.imdb_id=m.imdb_id';
+					$where[] = 'g2m_'.$idx.'.genre_id=' . intval ( $value );
+				}
+				else
+				{
+					$joins[] = 'LEFT JOIN genre2movie g2m_'.$idx.' ON g2m_'.$idx.'.imdb_id=m.imdb_id AND g2m_'.$idx.'.genre_id=' . abs ( intval ( $value ) );
+					$where[] = 'g2m_'.$idx.'.genre_id IS NULL';
+				}
 
 				$idx++;
 			}
@@ -481,7 +489,7 @@ class sqlitedb extends SQLite3
 	 * @param Array  $placeholders assoziatives Array mit Platzhaltern und deren Datentypen
 	 * @return Array Ergebnis der SQL-Abfrage
 	 */
-	private function results ( $sql, $placeholders = array() )
+	public function results ( $sql, $placeholders = array() )
 	{
 		$query = $this -> prepare ( $sql );
 
