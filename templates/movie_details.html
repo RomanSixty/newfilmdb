@@ -8,7 +8,7 @@
 </header>
 
 {IF IS_ADMIN}
-<a href="#" class="editlink" data-imdbid="%%%imdb_id%%%"><img src="./fdb_img/edit.png" alt="edit"/></a>
+<a href="#" class="editlink" data-imdbid="%%%imdb_id%%%" title="Eintrag bearbeiten"><img src="./fdb_img/edit.png" alt="edit"/></a>
 {ENDIF IS_ADMIN}
 
 <section class="card">
@@ -100,8 +100,8 @@
 	{IF IS_ADMIN}
 	<span class="date_update">%%%date_update%%%</span>
 
-	<a href="#" class="updatelink" data-imdbid="%%%imdb_id%%%"><img src="./fdb_img/refresh.png" alt="refresh"/></a>
-	<a href="#" class="addlink" data-imdbid="%%%imdb_id%%%"><img src="./fdb_img/add.png" alt="add"/></a>
+	<a href="#" class="updatelink" data-imdbid="%%%imdb_id%%%" title="Daten aktualisieren"><img src="./fdb_img/refresh.png" alt="refresh"/></a>
+	<a href="#" class="addlink" data-imdbid="%%%imdb_id%%%" title="Film hinzufügen"><img src="./fdb_img/add.png" alt="add"/></a>
 	{ENDIF IS_ADMIN}
 
 </section><!-- class="associated" -->
