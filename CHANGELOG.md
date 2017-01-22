@@ -2,14 +2,15 @@
 
 ## 22 Jan 2017
 * negative genre filters (shift + click to find movies *not* of a certain genre)
-* also exclude short movies from default overview and quick filters
+* exclude short movies from default overview and quick filters
+* exclude animated movies from cast quick filter (to have mostly actual, not just voice actors)
 
 ## 19 Apr 2015
-* include IMDb's Top 250 ranking
+* include [IMDb's Top 250](http://www.imdb.com/chart/top) ranking
 
 ## 20 Sep 2014
 * switch to *SQLite* for database backend
-* quick filters for most referenced cast and director
+* quick filters for most referenced cast and directors
 
 ## 14 Jul 2013
 * added [Bechdel test rating](http://bechdeltest.com) integration
