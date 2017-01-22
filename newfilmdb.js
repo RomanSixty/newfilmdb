@@ -164,7 +164,7 @@ function initForm()
 
 function initFilter ( id )
 {
-	$('#dashboard label[for=' + id + ']').click(function(){
+	$('#dashboard label[for=' + id + ']').unbind('click').click(function(){
 		$('input[id=' + id + ']').remove();
 		$(this).remove();
 
