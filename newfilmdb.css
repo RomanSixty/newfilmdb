@@ -149,7 +149,7 @@ li[data-count]:after {
 }
 
 #fulltext {
-	border-radius: 15px;
+	border-radius: 3px;
 	padding: 0 5px;
 	font-size: 0.8em;
 	box-shadow: 1px 1px 2px #666 inset;
@@ -175,7 +175,7 @@ li[data-count]:after {
 #dashboard label.filter,
 #dashboard .checkbutton {
 	background: #666;
-	border-radius: 15px;
+	border-radius: 3px;
 	font-size: 0.8em;
 	padding: 0 6px;
 	cursor: pointer;
