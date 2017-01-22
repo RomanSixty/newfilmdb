@@ -461,24 +461,52 @@ class sqlitedb extends SQLite3
 	}
 
 	/**
-	 * besorgt eine Liste der 20 aktivsten Cast-Mitglieder
+	 * besorgt eine Liste der 25 aktivsten Darsteller
+	 * (Kurz- und Animationsfilme ausgenommen)
 	 * mit zugehöriger Anzahl der Filme
 	 *
-	 * @param String $table director2movie | cast2movie
-	 * @return Array Cast-Liste
+	 * @return Array Darsteller-Liste
 	 */
-	public function getCastList ( $table )
+	public function getCastList()
 	{
 		return $this -> results ( 'SELECT
 				c.cast_id,
 				"cast",
-				COUNT(x2m.imdb_id) AS cnt
+				COUNT(c2m.imdb_id) AS cnt
 			FROM "cast" c
-			LEFT JOIN ' . $table . ' x2m ON x2m.cast_id=c.cast_id
-			GROUP BY x2m.cast_id
+			LEFT JOIN cast2movie  c2m ON c2m.cast_id=c.cast_id
+			LEFT JOIN genre2movie g2m_1 ON c2m.imdb_id=g2m_1.imdb_id AND g2m_1.genre_id = 3
+			LEFT JOIN genre2movie g2m_2 ON c2m.imdb_id=g2m_2.imdb_id AND g2m_2.genre_id = 6
+			WHERE g2m_1.genre_id IS NULL
+			  AND g2m_2.genre_id IS NULL
+			GROUP BY c2m.cast_id
 			ORDER BY
-				COUNT(x2m.imdb_id) DESC,
-				AVG(x2m.sort) ASC
+				COUNT(c2m.imdb_id) DESC,
+				AVG(c2m.sort) ASC
+			LIMIT 25' );
+	}
+
+	/**
+	 * besorgt eine Liste der 25 aktivsten Regisseure
+	 * (Kurzfilme ausgenommen)
+	 * mit zugehöriger Anzahl der Filme
+	 *
+	 * @return Array Cast-Liste
+	 */
+	public function getDirectorList()
+	{
+		return $this -> results ( 'SELECT
+				c.cast_id,
+				"cast",
+				COUNT(d2m.imdb_id) AS cnt
+			FROM "cast" c
+			LEFT JOIN director2movie d2m ON d2m.cast_id=c.cast_id
+			LEFT JOIN genre2movie g2m ON d2m.imdb_id=g2m.imdb_id AND g2m.genre_id = 3
+			WHERE g2m.genre_id IS NULL
+			GROUP BY d2m.cast_id
+			ORDER BY
+				COUNT(d2m.imdb_id) DESC,
+				AVG(d2m.sort) ASC
 			LIMIT 25' );
 	}
 

@@ -15,7 +15,9 @@ require ( 'lib_html.php' );
 
 $db = new sqlitedb();
 
-$movies = $db -> getMovieList();
+$_REQUEST [ 'genre' ][] = -3;
+
+$movies = $db -> getMovieList ( $db -> getFilters ( $_REQUEST ) );
 
 echo getDashboard ( count ( $movies ) );
 

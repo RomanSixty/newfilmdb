@@ -112,8 +112,8 @@ function getDashboard ( $count = 0 )
 	$replacements = array (
 		'COUNT'     => $count,
 		'genres'    => $db -> getGenreList(),
-		'directors' => $db -> getCastList ( 'director2movie' ),
-		'cast'      => $db -> getCastList ( 'cast2movie'     )
+		'directors' => $db -> getDirectorList(),
+		'cast'      => $db -> getCastList()
 	);
 
     return templateReplacements ( $template, $replacements );
