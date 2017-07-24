@@ -4,7 +4,7 @@
 
 This project is a custom built database for my movie collection. I started out using *MongoDB* as database backend but soon realized that using a technology I don't use in everyday work didn't help my motivation in implementing features. Therefore I switched to *SQLite*.
 
-##Features
+## Features
 
 ![Screenshot NewFilmDb](/screenshot.jpg?raw=true)
 
@@ -30,13 +30,13 @@ This project is a custom built database for my movie collection. I started out u
 * internal links from detail view to lists filtered by genre, cast or directors
 * quick filter for the 25 most referenced cast members and directors
 
-##Requirements (contained in this repository)
+## Requirements (contained in this repository)
 
   * [jQuery](http://jquery.com/) for some AJAX stuff
   * [jQuery Lazy Load Plugin](http://www.appelsiini.net/projects/lazyload) for
     loading movie posters only when in viewport
 
-###Other requirements (not contained):
+### Other requirements (not contained):
 
   * [IMDBPHP2](http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper,
     configured as submodule in directory `imdbphp/`
@@ -44,5 +44,6 @@ This project is a custom built database for my movie collection. I started out u
   * [PECL::intl](https://pecl.php.net/package/intl) for correct utf82ascii transliterations
 
 
-#Legal
+# Legal
+
 This software is distributed under the GPL.
