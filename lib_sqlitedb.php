@@ -366,7 +366,8 @@ class sqlitedb extends SQLite3
 				m.imdb_id,
 				m.imdb_title_orig,
 				m.imdb_photo,
-				m.custom_rating
+				m.custom_rating,
+				m.imdb_year
 			FROM movie m
 			%JOIN
 			%WHERE
@@ -382,7 +383,7 @@ class sqlitedb extends SQLite3
 
 		$sql = str_replace ( '%JOIN',  implode ( ' ', $filters [ 'joins' ] ),                $sql );
 		$sql = str_replace ( '%WHERE', 'WHERE ' . implode ( ' AND ', $filters [ 'where' ] ), $sql );
-		$sql = str_replace ( '%ORDER', 'ORDER BY imdb_year DESC',                            $sql );
+		$sql = str_replace ( '%ORDER', 'ORDER BY imdb_year DESC, m.imdb_id DESC',            $sql );
 
 		return $this -> results ( $sql );
 	}

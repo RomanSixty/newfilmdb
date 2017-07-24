@@ -1,4 +1,7 @@
-#Changelog
+# Changelog
+
+## 24 Jul 2017
+* show year of movies in gallery view
 
 ## 22 Jan 2017
 * negative genre filters (shift + click to find movies *not* of a certain genre)

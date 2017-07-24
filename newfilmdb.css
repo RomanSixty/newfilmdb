@@ -115,6 +115,10 @@ li[data-count]:after {
 	font-size: 0.9em;
 }
 
+#list .movie p span {
+  float: right;
+}
+
 
 /* Dashboard */
 
