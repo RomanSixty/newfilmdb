@@ -16,6 +16,11 @@ $(function(){
 			});
 			return false;
 		})
+        .on('click', '.list_type a', function(e){
+            typeFilter( e, $(this) );
+
+            return false;
+        })
 		.on('click', '.list_genre a', function(e){
 			genreFilter( e, $(this) );
 
@@ -117,10 +122,6 @@ $(function(){
 
 function initContent()
 {
-	$('img.delay').lazyload({
-		effect: 'fadeIn'
-	});
-
 	$('.filter input').each(function(){
 		initFilter ( $(this).attr('id') );
 	});
@@ -164,12 +165,37 @@ function initForm()
 
 function initFilter ( id )
 {
-	$('#dashboard label[for=' + id + ']').unbind('click').click(function(){
+	$('#dashboard label.filter[for=' + id + ']').unbind('click').click(function(){
 		$('input[id=' + id + ']').remove();
 		$(this).remove();
 
 		$('#searchform').submit();
 	});
+}
+
+function typeFilter ( e, $el )
+{
+    var type_value= $el.data('value');
+    var type_name = $el.html();
+
+    if ( e.shiftKey )
+    {
+        type_value = - type_value;
+        type_name  = '-' + type_name;
+    }
+
+    timest = +new Date();
+
+    filterid = 'type' + timest;
+
+    html  = '<input id="' + filterid + '" type="hidden" name="type[]" value="' + type_value + '" />';
+    html += '<label class="filter" for="' + filterid + '">' + type_name + '</label>';
+
+    $('label[id=type]').after(html);
+    initFilter ( filterid );
+
+    $('#fulltext').val('');
+    $('#searchform').submit();
 }
 
 function genreFilter ( e, $el )

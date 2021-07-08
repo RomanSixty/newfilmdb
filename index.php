@@ -34,8 +34,7 @@ echo '</aside>';
 
 ?>
 
-  <script src="./jquery-1.7.min.js"></script>
-  <script src="./jquery.lazyload.min.js"></script>
-  <script src="./newfilmdb.js"></script>
+  <script src="js/jquery-1.7.min.js"></script>
+  <script src="js/newfilmdb.js"></script>
   </body>
 </html>
