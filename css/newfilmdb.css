@@ -22,8 +22,7 @@ a:hover {
 }
 
 h1, h2 {
-	font-family: "Lusitana", Times, serif;
-	font-variant: small-caps;
+	font-family: "Cinzel", Times, serif;
 }
 
 h1 .subtitle {
@@ -127,7 +126,7 @@ li[data-count]:after {
 	top: 0;
 	left: -5px;
 	right: 550px;
-	background: rgba(0,0,0,0.8);
+	background: rgba(0,0,0,0.9);
 	box-shadow: 0 5px 5px rgba(0,0,0,0.6);
 	color: #fff;
 	z-index: 10;
@@ -148,12 +147,11 @@ li[data-count]:after {
 }
 
 .filter:hover .dropdown {
-	top: 32px;
+	top: 30px;
 	opacity: 1;
 }
 
 #fulltext {
-	border-radius: 3px;
 	padding: 0 5px;
 	font-size: 0.8em;
 	box-shadow: 1px 1px 2px #666 inset;
@@ -179,13 +177,11 @@ li[data-count]:after {
 #dashboard label.filter,
 #dashboard .checkbutton {
 	background: #666;
-	border-radius: 3px;
 	font-size: 0.8em;
 	padding: 0 6px;
 	cursor: pointer;
 	margin-left: 3px;
 	text-shadow: 1px 1px #333;
-	cursor: pointer;
 }
 
 #dashboard .checkbutton input {
@@ -222,7 +218,6 @@ li[data-count]:after {
 
 #details .card {
 	padding: 15px 20px;
-	border-radius: 10px;
 	position: relative;
 	box-shadow: 2px 2px 5px #bbb;
 	background: #fafafa;
@@ -292,7 +287,7 @@ li[data-count]:after {
 }
 
 #details .star {
-	background: url("./fdb_img/star.png") no-repeat scroll 0 0 transparent;
+	background: url("../fdb_img/star.png") no-repeat scroll 0 0 transparent;
 	display: inline-block;
 	float: left;
 	font-family: Tahoma, sans-serif;
@@ -307,7 +302,7 @@ li[data-count]:after {
 }
 
 #details .trophy {
-	background: url("./fdb_img/trophy.png") no-repeat scroll 0 0 transparent;
+	background: url("../fdb_img/trophy.png") no-repeat scroll 0 0 transparent;
 	display: inline-block;
 	float: left;
 	font-family: Tahoma, sans-serif;
@@ -375,8 +370,6 @@ li[data-count]:after {
 #edit_movie .button {
 	font-size: 0.9em;
 	padding: 7px 20px;
-	border-radius: 10px;
-	box-shadow: inset -10px -10px 20px -10px rgba(0,0,0,0.6);
 	cursor: pointer;
 	margin: 20px;
 }
