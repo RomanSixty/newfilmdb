@@ -667,7 +667,7 @@ class sqlitedb extends SQLite3
 	 */
 	private function _transliterate ( $string )
 	{
-		setlocale ( 'LC_ALL', 'de_DE' );
+		setlocale ( LC_ALL, 'de_DE' );
 
 		$string = iconv ( 'utf-8', 'ASCII//TRANSLIT', $string );
 
