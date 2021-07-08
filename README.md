@@ -18,6 +18,7 @@ This project is a custom built database for my movie collection. I started out u
   * duration
   * year of publication
   * top250 ranking (if applicable)
+  * movie type (Movie, TV Series etc.)
 * own information can be added
   * rating
   * notes
@@ -26,15 +27,13 @@ This project is a custom built database for my movie collection. I started out u
 * gallery view to browse the collection
 * detailed view in sidebar
 * fulltext search
-* filters (by genres, actors, directors, language)
+* filters (by types, genres, actors, directors, language)
 * internal links from detail view to lists filtered by genre, cast or directors
 * quick filter for the 25 most referenced cast members and directors
 
 ## Requirements (contained in this repository)
 
   * [jQuery](http://jquery.com/) for some AJAX stuff
-  * [jQuery Lazy Load Plugin](http://www.appelsiini.net/projects/lazyload) for
-    loading movie posters only when in viewport
 
 ### Other requirements (not contained):
 
