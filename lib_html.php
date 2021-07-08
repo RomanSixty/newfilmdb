@@ -248,7 +248,7 @@ function getEditForm ( $imdb_id, $edit = true )
 
         $snippet .= '<fieldset>';
         $snippet .= '<legend><label for="imdbid">IMDb-ID*:</label></legend>';
-        $snippet .= '<input type="text" maxlength="7" size="7" id="imdbid" name="imdb_id" value="" />';
+        $snippet .= '<input type="text" maxlength="8" size="8" id="imdbid" name="imdb_id" value="" />';
         $snippet .= '</fieldset>';
     }
 
