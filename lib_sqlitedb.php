@@ -11,8 +11,20 @@ class sqlitedb extends SQLite3
 	{
 		$this -> open ( DIR . $this -> dbfile );
 
-		//$this -> exec ( file_get_contents ( DIR . $this -> structure ) );
+		//$this -> updateDBSchema();
 	}
+
+	function updateDBSchema()
+    {
+        $schema_queries = explode ( ';', file_get_contents ( DIR . $this -> structure ) );
+
+        foreach ( $schema_queries as $query )
+        {
+            try {
+                $this -> exec ( $query );
+            } catch ( Exception $e ) { }
+        }
+    }
 
 	/**
 	 * darf der Nutzer editieren?
@@ -156,6 +168,7 @@ class sqlitedb extends SQLite3
 			imdb_title_eng,
 			imdb_title_orig,
 			imdb_year,
+			imdb_type,
 			language_deu,
 			language_eng,
 			language_omu,
@@ -176,6 +189,7 @@ class sqlitedb extends SQLite3
 			:imdb_title_eng,
 			:imdb_title_orig,
 			:imdb_year,
+			:imdb_type,
 			:language_deu,
 			:language_eng,
 			:language_omu,
@@ -223,7 +237,7 @@ class sqlitedb extends SQLite3
 	/**
 	 * aktualisiert die IMDb-unabhängigen Filmdaten
 	 *
-	 * @param Array $data Filmdaten aus dem Edit-Formular
+	 * @param array $data Filmdaten aus dem Edit-Formular
 	 */
 	public function updateMovie ( $data )
 	{
@@ -350,6 +364,24 @@ class sqlitedb extends SQLite3
 			}
 		}
 
+		// Typ-Filter (ODER)
+        if ( !empty ( $form [ 'type' ] ) && is_array ( $form [ 'type' ] ) )
+        {
+            $type_where = [];
+            $types = $this -> getTypeList();
+
+            foreach ( $form [ 'type' ] as $value )
+            {
+                if ( $value >= 0 )
+                    $type_where[] = 'm.imdb_type="' . $types [ $value -1 ][ 'name' ] . '"';
+                else
+                    $where[] = 'm.imdb_type<>"' . $types [ abs ( $value ) -1 ][ 'name' ] . '"';
+            }
+
+            if ( !empty ( $type_where ) )
+                $where[] = '(' . implode ( ' OR ', $type_where ) . ')';
+        }
+
 		return array ( 'joins' => $joins, 'where' => $where );
 	}
 
@@ -460,6 +492,27 @@ class sqlitedb extends SQLite3
 			GROUP BY g2m.genre_id
 			ORDER BY COUNT(g2m.imdb_id) DESC' );
 	}
+
+    /**
+     * besorgt eine Liste aller in der DB vorhandenen Genres
+     * mit zugehöriger Anzahl der Filme dieses Genres
+     *
+     * @return Array Genreliste
+     */
+    public function getTypeList()
+    {
+        $types = $this -> results ( 'SELECT
+				imdb_type AS name,
+				COUNT(imdb_id) AS cnt
+			FROM movie
+			GROUP BY imdb_type
+			ORDER BY imdb_type' );
+
+        foreach ( $types as $index => &$type )
+            $type [ 'value' ] = $index + 1;
+
+        return $types;
+    }
 
 	/**
 	 * besorgt eine Liste der 25 aktivsten Darsteller

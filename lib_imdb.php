@@ -64,7 +64,7 @@ function getIMDbMovie ( $imdb_id )
 
 	return array
 	(
-		'@imdb_id'    => intval ( $imdb_id ),
+		'@imdb_id'         => intval ( $imdb_id ),
 		'$imdb_photo'      => $movie->photo_localurl(),
 		'$imdb_plot'       => _charsetPrepare ( $movie->plotoutline() ),
 		'$imdb_rating'     => $movie->rating(),
@@ -74,6 +74,7 @@ function getIMDbMovie ( $imdb_id )
 		'$imdb_title_orig' => _charsetPrepare ( $title_orig ),
 		'$imdb_title_eng'  => _charsetPrepare ( $title_eng  ),
 		'@imdb_year'       => $movie->year(),
+		'$imdb_type'       => $movie->movietype(),
 		'$fulltext'        => '',
 
 		'genres'     => $movie->genres(),
@@ -95,9 +96,6 @@ function _charsetPrepare ( $string )
 
 	$string = html_entity_decode ( $string );
 	$string = str_replace ( '&#x27;', "'", $string );
-
-	// offenbar nicht mehr nötig...
-	//$string = utf8_encode ( $string );
 
 	return trim ( $string );
 }

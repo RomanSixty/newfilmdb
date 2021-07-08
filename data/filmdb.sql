@@ -60,3 +60,6 @@ ALTER TABLE "movie" ADD COLUMN "imdb_top250" INTEGER;
 
 -- Update 2015-04-19: English title of a movie
 ALTER TABLE "movie" ADD COLUMN "imdb_title_eng" VARCHAR NOT NULL DEFAULT "";
+
+-- Update 2020-02-16: Type (Movie, TV-Series, etc.)
+ALTER TABLE "movie" ADD COLUMN "imdb_type" VARCHAR NOT NULL DEFAULT "Movie";

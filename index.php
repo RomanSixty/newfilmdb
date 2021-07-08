@@ -16,7 +16,8 @@ require ( 'lib_html.php' );
 
 $db = new sqlitedb();
 
-$_REQUEST [ 'genre' ][] = -3;
+$_REQUEST [ 'genre' ][] = -3; // -Short
+$_REQUEST [ 'type'  ][] =  1; // Movie
 
 $movies = $db -> getMovieList ( $db -> getFilters ( $_REQUEST ) );
 

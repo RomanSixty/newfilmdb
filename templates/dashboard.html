@@ -44,6 +44,21 @@
 		</section>
 
 		<section class="filter">
+			<label id="type" class="section">Typ:</label>
+
+			<input id="type1" type="hidden" value="1" name="type[]">
+			<label class="filter" for="type1">Movie</label>
+
+			<ul class="dropdown list_type">
+				{{{LOOP_types
+				<li data-count="%%%types.cnt%%%">
+					<a href="#" data-value="%%%types.value%%%">%%%types.name%%%</a>
+				</li>
+				}}}
+			</ul>
+		</section>
+
+		<section class="filter">
 			<label id="genre" class="section">Genre:</label>
 
 			<input id="genre3" type="hidden" value="-3" name="genre[]">

@@ -111,6 +111,7 @@ function getDashboard ( $count = 0 )
 
 	$replacements = array (
 		'COUNT'     => $count,
+		'types'     => $db -> getTypeList(),
 		'genres'    => $db -> getGenreList(),
 		'directors' => $db -> getDirectorList(),
 		'cast'      => $db -> getCastList()
