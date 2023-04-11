@@ -1,3 +1,49 @@
+@font-face {
+  font-display: swap;
+  font-family: 'Lusitana';
+  font-style: normal;
+  font-weight: normal;
+  src: url('fonts/lusitana-v13-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+  url('fonts/lusitana-v13-latin-regular.woff') format('woff'), /* Modern Browsers */
+  url('fonts/lusitana-v13-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('fonts/lusitana-v13-latin-regular.svg#Lusitana') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Lusitana';
+  font-style: normal;
+  font-weight: bold;
+  src: url('fonts/lusitana-v13-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+  url('fonts/lusitana-v13-latin-700.woff') format('woff'), /* Modern Browsers */
+  url('fonts/lusitana-v13-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('fonts/lusitana-v13-latin-700.svg#Lusitana') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: normal;
+  src: url('fonts/cinzel-v23-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+  url('fonts/cinzel-v23-latin-regular.woff') format('woff'), /* Modern Browsers */
+  url('fonts/cinzel-v23-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('fonts/cinzel-v23-latin-regular.svg#Cinzel') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: bold;
+  src: url('fonts/cinzel-v23-latin-600.woff2') format('woff2'), /* Super Modern Browsers */
+  url('fonts/cinzel-v23-latin-600.woff') format('woff'), /* Modern Browsers */
+  url('fonts/cinzel-v23-latin-600.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('fonts/cinzel-v23-latin-600.svg#Cinzel') format('svg'); /* Legacy iOS */
+}
+
+
+
 * {
 	border: 0;
 	padding: 0;

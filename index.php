@@ -3,8 +3,6 @@
   <head>
     <title>LX' Filmdb</title>
     <meta charset="utf-8"/>
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lusitana:400,700" type="text/css"/>
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Cinzel:400,600" type="text/css"/>
     <link rel="stylesheet" href="css/newfilmdb.css" type="text/css"/>
   </head>
   <body>
