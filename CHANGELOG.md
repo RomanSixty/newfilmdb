@@ -1,5 +1,15 @@
 # Changelog
 
+## 11 Jun 2023
+* fetch Metacritic and Rotten Tomatoes ratings (using [OMDb-API](https://www.omdbapi.com/))
+
+## 12 Apr 2023
+* Google fonts from local files (for privacy reasons)
+
+## 9 Jul 2021
+* fetch media types to filter by type
+* default view now only lists type "movie"
+
 ## 24 Jul 2017
 * show year of movies in gallery view
 

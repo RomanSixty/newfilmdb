@@ -21,3 +21,4 @@ chown www-data cache
 
 If your webserver process runs as a different user than `www-data`, you have to replace that with the user you need.
 
+For OMDb data you have to get an API key from https://www.omdbapi.com/. Place it into a `.env` file (you can copy `.env.dist` for reference).

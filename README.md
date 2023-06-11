@@ -19,6 +19,9 @@ This project is a custom built database for my movie collection. I started out u
   * year of publication
   * top250 ranking (if applicable)
   * movie type (Movie, TV Series etc.)
+* additional movie ratings from [OMDb-API](https://www.omdbapi.com/)
+  * Metacritic
+  * Rotten Tomatoes
 * own information can be added
   * rating
   * notes
@@ -41,6 +44,7 @@ This project is a custom built database for my movie collection. I started out u
     configured as submodule in directory `imdbphp/`
     you can clone this repository: `git@github.com:tboothman/imdbphp.git`
   * [PECL::intl](https://pecl.php.net/package/intl) for correct utf82ascii transliterations
+  * API key for OMDb-API (you can get one from their [website](https://www.omdbapi.com/))
 
 
 # Legal
