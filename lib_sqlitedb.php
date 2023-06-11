@@ -81,6 +81,8 @@ class sqlitedb extends SQLite3
 		$sort   = 0;
 		$values = array();
 
+        $arr_cast = array_unique ( $arr_cast );
+
 		// damit die Statements nicht zu groß werden, nur 100 pro Schwung
 		while ( $cast_id = array_shift ( $arr_cast ) )
 		{
@@ -157,7 +159,7 @@ class sqlitedb extends SQLite3
 	 */
 	public function saveMovie ( $data )
 	{
-		$this -> results ( 'INSERT OR REPLACE INTO movie(
+		$this -> results ( 'REPLACE INTO movie(
 			imdb_id,
 			imdb_photo,
 			imdb_plot,
@@ -583,7 +585,7 @@ class sqlitedb extends SQLite3
 		{
 			if ( empty ( $value ) && $value != 0 )
 				$type = SQLITE3_NULL;
-			else switch ( $key{0} )
+			else switch ( $key[0] )
 			{
 				case '@': $type = SQLITE3_INTEGER; break;
 				case '#': $type = SQLITE3_FLOAT;   break;

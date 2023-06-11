@@ -235,7 +235,7 @@ function getMovieDetails ( $imdb_id )
  * @param Boolean $edit Bearbeiten: true, Anlegen: false
  * @return String HTML-Code
  */
-function getEditForm ( $imdb_id, $edit = true )
+function getEditForm ( $imdb_id = null, $edit = true )
 {
 	global $db;
 
