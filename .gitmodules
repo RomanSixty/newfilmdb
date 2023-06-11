@@ -1,3 +1,4 @@
 [submodule "imdbphp"]
 	path = imdbphp
 	url = git@github.com:tboothman/imdbphp.git
+	ignore = dirty
