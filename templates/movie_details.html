@@ -19,6 +19,10 @@
 	</div>
 
 	<section class="main_details">
+        {IF custom_rating}
+        <div class="personal star" title="Personal Rating">%%%custom_rating%%%</div>
+        {ENDIF custom_rating}
+
     	{IF TITLE_DIFF}
 		<h2>%%%imdb_title_deu%%%</h2>
 		{ENDIF TITLE_DIFF}
@@ -32,17 +36,25 @@
 		}}}
 		</p>
 
-		<div class="star">%%%imdb_rating%%%</div>
-    	{IF custom_rating}
-		<div class="star">%%%custom_rating%%%</div>
-		{ENDIF custom_rating}
-		{IF imdb_top250}
-		<div class="trophy">%%%imdb_top250%%%</div>
-		{ENDIF imdb_top250}
+        <div class="ratings">
+            <div class="star" title="IMDb Rating">%%%imdb_rating%%%</div>
+            {IF imdb_top250}
+            <div class="trophy" title="IMDb Top 250 Rank">%%%imdb_top250%%%</div>
+            {ENDIF imdb_top250}
+            {IF metacritic}
+            <div class="metacritic %%%metacritic_color%%%" title="Metascore">%%%metacritic%%%</div>
+            {ENDIF metacritic}
+            {IF rottentomatoes}
+            <div class="rottentomatoes" title="Tomatometer">
+            <img src="/fdb_img/tomato_%%%tomatometer%%%.svg"> %%%rottentomatoes%%% %
+            </div>
+            {ENDIF rottentomatoes}
+        </div>
 
 		<dl>
 			<dt>Typ:</dd>
 			<dd>%%%imdb_type%%%</dd>
+
 			<dt>Sprachen:</dd>
 			<dd>
 				{IF language_deu}
@@ -57,6 +69,7 @@
 				<span class="csv">OmU</span>
 				{ENDIF language_omu}
 			</dd>
+
 			%%%BECHDEL%%%
 		</dl>
 

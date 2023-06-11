@@ -282,9 +282,15 @@ li[data-count]:after {
 	width: 240px;
 }
 
+#details .personal {
+  float: right;
+  margin: 0 0 20px 20px;
+}
+
 #details h2 {
 	font-size: 1.3em;
 	margin-bottom: 7px;
+  hyphens: auto;
 }
 
 #details p {
@@ -329,37 +335,83 @@ li[data-count]:after {
 #details dt {
 	font-weight: bold;
 	float: left;
-	width: 80px;
+	width: 130px;
+}
+
+#details .ratings {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#details .ratings > * {
+  margin-right: 10px;
+}
+
+#details .ratings > *:last-child {
+  margin-right: 0;
 }
 
 #details .star {
 	background: url("../fdb_img/star.png") no-repeat scroll 0 0 transparent;
 	display: inline-block;
-	float: left;
 	font-family: Tahoma, sans-serif;
-	font-size: 15px;
+	font-size: 13px;
 	font-weight: bold;
-	height: 66px;
-	line-height: 66px;
-	padding-right: 5px;
+	height: 39px;
+	line-height: 42px;
 	text-align: center;
 	vertical-align: middle;
-	width: 66px;
+	width: 44px;
 }
 
 #details .trophy {
 	background: url("../fdb_img/trophy.png") no-repeat scroll 0 0 transparent;
 	display: inline-block;
-	float: left;
 	font-family: Tahoma, sans-serif;
 	font-size: 13px;
 	font-weight: bold;
-	height: 59px;
-	line-height: 45px;
-	padding-right: 5px;
+	height: 39px;
+	line-height: 32px;
 	text-align: center;
 	vertical-align: middle;
-	width: 59px;
+	width: 39px;
+}
+
+#details .metacritic {
+  height: 35px;
+  width: 35px;
+  line-height: 35px;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: none;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 2px 10px 2px 2px;
+}
+
+#details .metacritic.green {
+  background: #66cc33;
+}
+#details .metacritic.yellow {
+  background: #ffcc33;
+}
+#details .metacritic.red {
+  background: #ff0000;
+}
+
+#details .rottentomatoes {
+  white-space: nowrap;
+  font-weight: bold;
+  line-height: 15px;
+}
+
+#details .rottentomatoes img {
+  height: 18px;
+  width: 18px;
 }
 
 #details span.csv:after {

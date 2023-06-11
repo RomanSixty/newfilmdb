@@ -173,6 +173,18 @@ function getMovieDetails ( $imdb_id )
 	else
 		$movie [ 'NOTES_QUALITY' ] = true;
 
+    if ( $movie [ 'metacritic' ] < 40 )
+        $movie [ 'metacritic_color' ] = 'red';
+    elseif ( $movie [ 'metacritic' ] > 60 )
+        $movie [ 'metacritic_color' ] = 'green';
+    else
+        $movie [ 'metacritic_color' ] = 'yellow';
+
+    if ( $movie [ 'rottentomatoes' ] > 60 )
+        $movie [ 'tomatometer' ] = 'fresh';
+    else
+        $movie [ 'tomatometer' ] = 'rotten';
+
 	// wir zeigen maximal 5 Regisseure,
 	// davon maximal 3 ohne weitere Filme in der Datenbank
 	$directnum = $directshown = 0;
