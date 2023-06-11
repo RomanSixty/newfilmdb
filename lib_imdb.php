@@ -24,7 +24,7 @@ function getIMDbMovie ( $imdb_id )
 	$directors = $actors = array();
 
 	if ( empty ( $title_orig ) )
-		$title_orig = $movie->title();
+		$title_orig = $title_eng = $movie->title();
 
 	// deutscher Titel
 	$title_deu = $movie -> title();
@@ -32,9 +32,12 @@ function getIMDbMovie ( $imdb_id )
 
 	foreach ( (array) $movie -> alsoknow() as $aka )
 	{
+        if ( $aka [ 'comment' ] == 'Working Title' )
+            continue;
+
 		if (    $deu_found === false
-			 && (    $aka [ 'country' ] == 'Germany'
-			      || $aka [ 'country' ] == 'West Germany' ) )
+			 && (    $aka [ 'countryCode' ] == 'DE'
+			      || $aka [ 'countryCode' ] == 'XWG' ) )
 		{
 			$title_deu = $aka [ 'title' ];
 			$deu_found = true;
@@ -43,15 +46,17 @@ function getIMDbMovie ( $imdb_id )
 				 && $aka [ 'country' ] == 'International' )
 			$title_deu = $aka [ 'title' ];
 		elseif (    $eng_found === false
-				 && $aka [ 'country' ] == 'World-wide'
-				 && $aka [ 'comment' ] == 'English title' )
+				 && $aka [ 'countryCode' ] == 'XWW' )
 		{
 			$title_eng = $aka [ 'title' ];
 			$eng_found = true;
 		}
 		elseif (    $eng_found === false
-				 && $aka [ 'country' ] == 'USA' )
+				 && $aka [ 'countryCode' ] == 'US' )
+        {
 			$title_eng = $aka [ 'title' ];
+            $eng_found = true;
+        }
 	}
 
 	// Regisseur
