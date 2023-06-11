@@ -9,6 +9,7 @@ require ( 'lib_sqlitedb.php' );
 require ( 'lib_bechdel.php' );
 require ( 'lib_html.php' );
 require ( 'lib_imdb.php' );
+require ( 'lib_omdb.php' );
 
 $db = new sqlitedb();
 
@@ -39,8 +40,8 @@ if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
 
 			$movie = array_merge ( $movie, getIMDbMovie ( $imdb_id ) );
 
-			// Bechdel-Daten ergänzen
-			$movie = array_merge ( $movie, getBechdelInfo ( $imdb_id ) );
+			// Bechdel-Daten und weitere Ratings ergänzen
+			$movie = array_merge ( $movie, getBechdelInfo ( $imdb_id ), getOMDbRatings ( $imdb_id ) );
 
 			$db -> saveMovie ( $movie );
 		}
@@ -63,11 +64,15 @@ if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
 
 		$imdb_id = intval ( $_REQUEST [ 'imdb_id' ] );
 
-		$movie = array_merge ( $db -> getSingleMovie ( $imdb_id ), getIMDbMovie ( $imdb_id ), getBechdelInfo ( $imdb_id ) );
+		$movie = array_merge ( $db -> getSingleMovie ( $imdb_id ), getIMDbMovie ( $imdb_id ), getBechdelInfo ( $imdb_id ), getOMDbRatings ( $imdb_id ) );
 
 		$movie [ '@language_deu'   ] = $movie [ 'language_deu'   ];
 		$movie [ '@language_eng'   ] = $movie [ 'language_eng'   ];
 		$movie [ '@language_omu'   ] = $movie [ 'language_omu'   ];
+
+		$movie [ '@metacritic'     ] = $movie [ 'metacritic'     ];
+		$movie [ '@rottentomatoes' ] = $movie [ 'rottentomatoes' ];
+
 		$movie [ '@custom_rating'  ] = $movie [ 'custom_rating'  ];
 		$movie [ '$custom_notes'   ] = $movie [ 'custom_notes'   ];
 		$movie [ '$custom_quality' ] = $movie [ 'custom_quality' ];

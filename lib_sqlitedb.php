@@ -177,7 +177,9 @@ class sqlitedb extends SQLite3
 			custom_quality,
 			bechdel_id,
 			bechdel_rating,
-			bechdel_dubious
+			bechdel_dubious,
+			metacritic,
+			rottentomatoes
 		) VALUES (
 			:imdb_id,
 			:imdb_photo,
@@ -198,7 +200,9 @@ class sqlitedb extends SQLite3
 			:custom_quality,
 			:bechdel_id,
 			:bechdel_rating,
-			:bechdel_dubious
+			:bechdel_dubious,
+			:metacritic,
+			:rottentomatoes
 		)', $data );
 
 		// Cast

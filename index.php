@@ -9,6 +9,7 @@
 <?php
 
 require ( 'lib_imdb.php' );
+require ( 'lib_omdb.php' );
 require ( 'lib_sqlitedb.php' );
 require ( 'lib_html.php' );
 

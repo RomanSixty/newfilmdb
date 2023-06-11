@@ -1,3 +1,4 @@
 data/filmdb.sqlite
 data/filmdb_data.sql
 maintenance/
+.env

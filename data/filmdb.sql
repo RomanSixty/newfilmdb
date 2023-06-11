@@ -63,3 +63,7 @@ ALTER TABLE "movie" ADD COLUMN "imdb_title_eng" VARCHAR NOT NULL DEFAULT "";
 
 -- Update 2020-02-16: Type (Movie, TV-Series, etc.)
 ALTER TABLE "movie" ADD COLUMN "imdb_type" VARCHAR NOT NULL DEFAULT "Movie";
+
+-- Update 2023-06-10: Metacritic and RottenTomatoes ratings
+ALTER TABLE "movie" ADD COLUMN "metacritic" INTEGER;
+ALTER TABLE "movie" ADD COLUMN "rottentomatoes" INTEGER;
