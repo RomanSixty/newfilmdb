@@ -1,106 +1,106 @@
 <section id="dashboard">
 
-	<form method="POST" action="./" id="searchform">
+    <form method="POST" action="./" id="searchform">
 
-		<!-- full text search -->
-		<section class="filter">
-			<input type="text"
-			       value=""
-			       name="fulltext"
-				   placeholder="Suche"
-			       id="fulltext" />
-		</section>
+        <!-- full text search -->
+        <section class="filter">
+            <input type="text"
+                   value=""
+                   name="fulltext"
+                   placeholder="Suche"
+                   id="fulltext" />
+        </section>
 
-	    <!-- language filter -->
-	    <section class="filter">
-		    <label class="section">Sprache:</label>
-		    <span class="checkbutton">
-		    	<input type="checkbox"
-				       class="check"
-				       value="1"
-				       checked="checked"
-				       name="lang[language_eng]"
-				       id="lang_eng" />
-		    	<label for="lang_eng">eng</label>
-		    </span>
-			<span class="checkbutton">
-				<input type="checkbox"
-				       class="check"
-				       value="1"
-				       checked="checked"
-				       name="lang[language_deu]"
-				       id="lang_deu" />
-				<label for="lang_deu">deu</label>
-			</span>
-			<span class="checkbutton">
-				<input type="checkbox"
-				       class="check"
-				       value="1"
-				       checked="checked"
-				       name="lang[language_omu]"
-				       id="lang_omu" />
-				<label for="lang_omu">OmU</label>
-			</span>
-		</section>
+        <!-- language filter -->
+        <section class="filter">
+            <label class="section">Sprache:</label>
+            <span class="checkbutton">
+                <input type="checkbox"
+                       class="check"
+                       value="1"
+                       checked="checked"
+                       name="lang[language_eng]"
+                       id="lang_eng" />
+                <label for="lang_eng">eng</label>
+            </span>
+            <span class="checkbutton">
+                <input type="checkbox"
+                       class="check"
+                       value="1"
+                       checked="checked"
+                       name="lang[language_deu]"
+                       id="lang_deu" />
+                <label for="lang_deu">deu</label>
+            </span>
+            <span class="checkbutton">
+                <input type="checkbox"
+                       class="check"
+                       value="1"
+                       checked="checked"
+                       name="lang[language_omu]"
+                       id="lang_omu" />
+                <label for="lang_omu">OmU</label>
+            </span>
+        </section>
 
-		<section class="filter">
-			<label id="type" class="section">Typ:</label>
+        <section class="filter">
+            <label id="type" class="section">Typ:</label>
 
-			<input id="type1" type="hidden" value="1" name="type[]">
-			<label class="filter" for="type1">Movie</label>
+            <input id="type1" type="hidden" value="1" name="type[]">
+            <label class="filter" for="type1">Movie</label>
 
-			<ul class="dropdown list_type">
-				{{{LOOP_types
-				<li data-count="%%%types.cnt%%%">
-					<a href="#" data-value="%%%types.value%%%">%%%types.name%%%</a>
-				</li>
-				}}}
-			</ul>
-		</section>
+            <ul class="dropdown list_type">
+                {{{LOOP_types
+                <li data-count="%%%types.cnt%%%">
+                    <a href="#" data-value="%%%types.value%%%">%%%types.name%%%</a>
+                </li>
+                }}}
+            </ul>
+        </section>
 
-		<section class="filter">
-			<label id="genre" class="section">Genre:</label>
+        <section class="filter">
+            <label id="genre" class="section">Genre:</label>
 
-			<input id="genre3" type="hidden" value="-3" name="genre[]">
-			<label class="filter" for="genre3">-Short</label>
+            <input id="genre3" type="hidden" value="-3" name="genre[]">
+            <label class="filter" for="genre3">-Short</label>
 
-			<ul class="dropdown list_genre">
-			{{{LOOP_genres
-				<li data-count="%%%genres.cnt%%%">
-					<a href="#" data-id="%%%genres.genre_id%%%">%%%genres.genre%%%</a>
-				</li>
-			}}}
-			</ul>
-		</section>
+            <ul class="dropdown list_genre">
+            {{{LOOP_genres
+                <li data-count="%%%genres.cnt%%%">
+                    <a href="#" data-id="%%%genres.genre_id%%%">%%%genres.genre%%%</a>
+                </li>
+            }}}
+            </ul>
+        </section>
 
-		<section class="filter">
-			<label id="director" class="section">Regie:</label>
+        <section class="filter">
+            <label id="director" class="section">Regie:</label>
 
-			<ul class="dropdown list_director">
-			{{{LOOP_directors
-				<li data-count="%%%directors.cnt%%%">
-					<a href="#" data-id="%%%directors.cast_id%%%">%%%directors.cast%%%</a>
-				</li>
-			}}}
-			</ul>
-		</section>
+            <ul class="dropdown list_director">
+            {{{LOOP_directors
+                <li data-count="%%%directors.cnt%%%">
+                    <a href="#" data-id="%%%directors.cast_id%%%">%%%directors.cast%%%</a>
+                </li>
+            }}}
+            </ul>
+        </section>
 
-		<section class="filter">
-			<label id="cast" class="section">Cast:</label>
+        <section class="filter">
+            <label id="cast" class="section">Cast:</label>
 
-			<ul class="dropdown list_actor">
-			{{{LOOP_cast
-				<li data-count="%%%cast.cnt%%%">
-					<a href="#" data-id="%%%cast.cast_id%%%">%%%cast.cast%%%</a>
-				</li>
-			}}}
-			</ul>
-		</section>
+            <ul class="dropdown list_actor">
+            {{{LOOP_cast
+                <li data-count="%%%cast.cnt%%%">
+                    <a href="#" data-id="%%%cast.cast_id%%%">%%%cast.cast%%%</a>
+                </li>
+            }}}
+            </ul>
+        </section>
 
-	</form>
+    </form>
 
-	<section class="counter">
-		<span id="num_results">%%%COUNT%%%</span> Ergebnisse
-	</section>
+    <section class="counter">
+        <span id="num_results">%%%COUNT%%%</span> Ergebnisse
+    </section>
 
 </section>

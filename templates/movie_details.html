@@ -1,10 +1,10 @@
 <header>
-	<h1>
-		%%%imdb_title_orig%%%
-		{IF TITLE_DIFF_ENG}
-			<span class="subtitle">%%%imdb_title_eng%%%</span>
-		{ENDIF TITLE_DIFF_ENG}
-	</h1>
+    <h1>
+        %%%imdb_title_orig%%%
+        {IF TITLE_DIFF_ENG}
+            <span class="subtitle">%%%imdb_title_eng%%%</span>
+        {ENDIF TITLE_DIFF_ENG}
+    </h1>
 </header>
 
 {IF IS_ADMIN}
@@ -13,28 +13,28 @@
 
 <section class="card">
 
-	<div class="img">
-		<a href="http://www.imdb.com/title/tt%%%IMDBID_PADDED%%%"
-		    target="_blank"><img src="%%%PHOTO%%%" alt="%%%imdb_title_orig%%%" /></a>
-	</div>
+    <div class="img">
+        <a href="http://www.imdb.com/title/tt%%%IMDBID_PADDED%%%"
+            target="_blank"><img src="%%%PHOTO%%%" alt="%%%imdb_title_orig%%%" /></a>
+    </div>
 
-	<section class="main_details">
+    <section class="main_details">
         {IF custom_rating}
         <div class="personal star" title="Personal Rating">%%%custom_rating%%%</div>
         {ENDIF custom_rating}
 
-    	{IF TITLE_DIFF}
-		<h2>%%%imdb_title_deu%%%</h2>
-		{ENDIF TITLE_DIFF}
+        {IF TITLE_DIFF}
+        <h2>%%%imdb_title_deu%%%</h2>
+        {ENDIF TITLE_DIFF}
 
-		<p class="year_runtime">%%%imdb_year%%%, %%%imdb_runtime%%% Minuten</p>
-		<p class="plot"><span>%%%imdb_plot%%%</span></p>
+        <p class="year_runtime">%%%imdb_year%%%, %%%imdb_runtime%%% Minuten</p>
+        <p class="plot"><span>%%%imdb_plot%%%</span></p>
 
-		<p class="genre">
-		{{{LOOP_genres
-			<span class="csv"><a href="#" data-id="%%%genres.id%%%">%%%genres.name%%%</a></span>
-		}}}
-		</p>
+        <p class="genre">
+        {{{LOOP_genres
+            <span class="csv"><a href="#" data-id="%%%genres.id%%%">%%%genres.name%%%</a></span>
+        }}}
+        </p>
 
         <div class="ratings">
             <div class="star" title="IMDb Rating">%%%imdb_rating%%%</div>
@@ -51,72 +51,72 @@
             {ENDIF rottentomatoes}
         </div>
 
-		<dl>
-			<dt>Typ:</dd>
-			<dd>%%%imdb_type%%%</dd>
+        <dl>
+            <dt>Typ:</dd>
+            <dd>%%%imdb_type%%%</dd>
 
-			<dt>Sprachen:</dd>
-			<dd>
-				{IF language_deu}
-				<span class="csv">deu</span>
-				{ENDIF language_deu}
+            <dt>Sprachen:</dd>
+            <dd>
+                {IF language_deu}
+                <span class="csv">deu</span>
+                {ENDIF language_deu}
 
-				{IF language_eng}
-				<span class="csv">eng</span>
-				{ENDIF language_eng}
+                {IF language_eng}
+                <span class="csv">eng</span>
+                {ENDIF language_eng}
 
-				{IF language_omu}
-				<span class="csv">OmU</span>
-				{ENDIF language_omu}
-			</dd>
+                {IF language_omu}
+                <span class="csv">OmU</span>
+                {ENDIF language_omu}
+            </dd>
 
-			%%%BECHDEL%%%
-		</dl>
+            %%%BECHDEL%%%
+        </dl>
 
-	</section><!-- class="main_details" -->
+    </section><!-- class="main_details" -->
 </section><!-- class="card" -->
 
 <section class="associated">
-	<label>Regie</label>
-	<ul class="directors">
-	{{{LOOP_director
-		<li{IF moviecount} data-count="%%%director.moviecount%%%"{ENDIF moviecount}>
-			{IF moviecount}<a href="#" data-id="%%%director.id%%%">{ENDIF moviecount}%%%director.name%%%{IF moviecount}</a>{ENDIF moviecount}
-		</li>
-	}}}
-	</ul>
+    <label>Regie</label>
+    <ul class="directors">
+    {{{LOOP_director
+        <li{IF moviecount} data-count="%%%director.moviecount%%%"{ENDIF moviecount}>
+            {IF moviecount}<a href="#" data-id="%%%director.id%%%">{ENDIF moviecount}%%%director.name%%%{IF moviecount}</a>{ENDIF moviecount}
+        </li>
+    }}}
+    </ul>
 
-	{IF cast}
-	<label>Cast</label>
-	<ul class="actors">
-	{{{LOOP_cast
-		<li{IF moviecount} data-count="%%%cast.moviecount%%%"{ENDIF moviecount}>
-			{IF moviecount}<a href="#" data-id="%%%cast.id%%%">{ENDIF moviecount}%%%cast.name%%%{IF moviecount}</a>{ENDIF moviecount}
-		</li>
-	}}}
-	</ul>
-	{ENDIF cast}
+    {IF cast}
+    <label>Cast</label>
+    <ul class="actors">
+    {{{LOOP_cast
+        <li{IF moviecount} data-count="%%%cast.moviecount%%%"{ENDIF moviecount}>
+            {IF moviecount}<a href="#" data-id="%%%cast.id%%%">{ENDIF moviecount}%%%cast.name%%%{IF moviecount}</a>{ENDIF moviecount}
+        </li>
+    }}}
+    </ul>
+    {ENDIF cast}
 
-	{IF NOTES_QUALITY}
-	<label>Anmerkungen</label>
-	{ENDIF NOTES_QUALITY}
+    {IF NOTES_QUALITY}
+    <label>Anmerkungen</label>
+    {ENDIF NOTES_QUALITY}
 
-	{IF custom_notes}
-	<p>%%%custom_notes%%%</p>
-	{ENDIF custom_notes}
+    {IF custom_notes}
+    <p>%%%custom_notes%%%</p>
+    {ENDIF custom_notes}
 
-	{IF custom_quality}
-	<dl>
-		<dt>Qualität</dt>
-		<dd>%%%custom_quality%%%</dd>
-	</dl>
-	{ENDIF custom_quality}
+    {IF custom_quality}
+    <dl>
+        <dt>Qualität</dt>
+        <dd>%%%custom_quality%%%</dd>
+    </dl>
+    {ENDIF custom_quality}
 
-	{IF IS_ADMIN}
-	<span class="date_update">%%%date_update%%%</span>
+    {IF IS_ADMIN}
+    <span class="date_update">%%%date_update%%%</span>
 
-	<a href="#" class="updatelink" data-imdbid="%%%imdb_id%%%" title="Daten aktualisieren"><img src="./fdb_img/refresh.png" alt="refresh"/></a>
-	<a href="#" class="addlink" data-imdbid="%%%imdb_id%%%" title="Film hinzufügen"><img src="./fdb_img/add.png" alt="add"/></a>
-	{ENDIF IS_ADMIN}
+    <a href="#" class="updatelink" data-imdbid="%%%imdb_id%%%" title="Daten aktualisieren"><img src="./fdb_img/refresh.png" alt="refresh"/></a>
+    <a href="#" class="addlink" data-imdbid="%%%imdb_id%%%" title="Film hinzufügen"><img src="./fdb_img/add.png" alt="add"/></a>
+    {ENDIF IS_ADMIN}
 
 </section><!-- class="associated" -->

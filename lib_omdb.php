@@ -1,11 +1,11 @@
 <?php
 
 /**
- * holt zu einer IMDB-ID alle gewünschten Filmdaten
+ * holt zu einer IMDb-ID alle gewünschten Filmdaten
  * und packt sie in die passende Struktur
  *
- * @param Integer $imdb_id
- * @return Array Filmdaten
+ * @param int $imdb_id IMDb-ID
+ * @return array Filmdaten
  */
 function getOMDbRatings ( $imdb_id )
 {
@@ -33,10 +33,9 @@ function getOMDbRatings ( $imdb_id )
         return array();
     else
     {
-        $ratings = array
-        (
+        $ratings = [
             'metacritic' => intval ( $json [ 'Metascore' ] )
-        );
+        ];
 
         foreach ( $json [ 'Ratings' ] as $omdb_rating )
             if ( $omdb_rating [ 'Source' ] == 'Rotten Tomatoes' )
