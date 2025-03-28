@@ -1,4 +1,7 @@
 data/filmdb.sqlite
 data/filmdb_data.sql
 maintenance/
+vendor/
+images/
 .env
+.idea

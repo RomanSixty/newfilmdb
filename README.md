@@ -40,9 +40,8 @@ This project is a custom built database for my movie collection. I started out u
 
 ### Other requirements (not contained):
 
-  * [IMDBPHP2](http://projects.izzysoft.de/trac/imdbphp/) as IMDb data scraper,
-    configured as submodule in directory `imdbphp/`
-    you can clone this repository: `git@github.com:tboothman/imdbphp.git`
+  * [imdbGraphQLPHP](https://github.com/duck7000/imdbGraphQLPHP) as IMDb data scraper,
+    you can get it via `composer install`
   * [PECL::intl](https://pecl.php.net/package/intl) for correct utf82ascii transliterations
   * API key for OMDb-API (you can get one from their [website](https://www.omdbapi.com/))
 

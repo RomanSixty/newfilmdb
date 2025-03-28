@@ -2,10 +2,10 @@
 
 /**
  * dieses Skript beinhaltet die Funktionen, mit denen
- * aus IMDBPHP die Filmdaten geladen und strukturiert werden
+ * aus imdbGraphQLPHP die Filmdaten geladen und strukturiert werden
  */
 
-require ( 'imdbphp/bootstrap.php' );
+require ( 'vendor/duck7000/imdb-graphql-php/bootstrap.php' );
 
 
 /**
@@ -17,9 +17,13 @@ require ( 'imdbphp/bootstrap.php' );
  */
 function getIMDbMovie ( $imdb_id )
 {
-    $movie = new \Imdb\Title ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ) );
+    $config = new \Imdb\Config();
 
-    $title_orig = $title_eng = $movie -> orig_title();
+    $config->photoroot = __DIR__ . '/images/';
+
+    $movie = new \Imdb\Title ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ), $config );
+
+    $title_orig = $title_eng = $title_deu = $movie -> originalTitle();
 
     $directors = $actors = array();
 
@@ -28,14 +32,14 @@ function getIMDbMovie ( $imdb_id )
 
     $deu_found = $eng_found = false;
 
-    foreach ( (array) $movie -> alsoknow() as $aka )
+    foreach ( $movie -> alsoknow() as $aka )
     {
         if ( $aka [ 'comment' ] == 'Working Title' )
             continue;
 
         if (    $deu_found === false
-             && (    $aka [ 'countryCode' ] == 'DE'
-                  || $aka [ 'countryCode' ] == 'XWG' ) )
+             && (    $aka [ 'countryId' ] == 'DE'
+                  || $aka [ 'countryId' ] == 'XWG' ) )
         {
             $title_deu = $aka [ 'title' ];
             $deu_found = true;
@@ -46,13 +50,13 @@ function getIMDbMovie ( $imdb_id )
             $title_deu = $aka [ 'title' ];
         }
         elseif (    $eng_found === false
-                 && $aka [ 'countryCode' ] == 'XWW' )
+                 && $aka [ 'countryId' ] == 'XWW' )
         {
             $title_eng = $aka [ 'title' ];
             $eng_found = true;
         }
         elseif (    $eng_found === false
-                 && $aka [ 'countryCode' ] == 'US' )
+                 && $aka [ 'countryId' ] == 'US' )
         {
             $title_eng = $aka [ 'title' ];
             $eng_found = true;
@@ -60,7 +64,7 @@ function getIMDbMovie ( $imdb_id )
     }
 
     // Regisseur
-    foreach ( (array) $movie -> director() as $d )
+    foreach ( $movie -> director() as $d )
         $directors[] = _charsetPrepare ( $d [ 'name' ] );
 
     // Schauspieler
@@ -86,13 +90,25 @@ function getIMDbMovie ( $imdb_id )
             $type = 'Special';
             break;
     }
+
+    // Genres in einfaches Array übersetzen
+    $genre_raw = $movie->genre();
+
+    $genres = [];
+
+    foreach ( $genre_raw as $genre )
+        if ( !empty ( $genre [ 'mainGenre' ] ) )
+            $genres[] = $genre [ 'mainGenre' ];
+
+    $runtime = $movie->runtime();
+
     return [
         '@imdb_id'         => intval ( $imdb_id ),
-        '$imdb_photo'      => $movie->photo_localurl(),
+        '$imdb_photo'      => $movie->photoLocalurl(),
         '$imdb_plot'       => _charsetPrepare ( $movie->plotoutline() ),
         '$imdb_rating'     => $movie->rating(),
         '@imdb_top250'     => intval ( $movie->top250() ),
-        '@imdb_runtime'    => intval ( $movie->runtime() ),
+        '@imdb_runtime'    => intval ( $runtime [ 0 ][ 'time' ] ),
         '$imdb_title_deu'  => _charsetPrepare ( $title_deu  ),
         '$imdb_title_orig' => _charsetPrepare ( $title_orig ),
         '$imdb_title_eng'  => _charsetPrepare ( $title_eng  ),
@@ -100,7 +116,7 @@ function getIMDbMovie ( $imdb_id )
         '$imdb_type'       => $type,
         '$fulltext'        => '',
 
-        'genres'     => $movie->genres(),
+        'genres'     => $genres,
         'director'   => $directors,
         'cast'       => $actors
    ];

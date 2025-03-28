@@ -1,0 +1,8 @@
+{
+  "name": "romansixty/newfilmdb",
+  "description": "Database using SQLite to keep track of personal movie collections",
+  "require": {
+    "php": ">=7.0",
+    "duck7000/imdb-graphql-php": "2.*"
+  }
+}
