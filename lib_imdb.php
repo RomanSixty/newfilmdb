@@ -67,6 +67,25 @@ function getIMDbMovie ( $imdb_id )
     foreach ( (array) $movie -> cast() as $c )
         $actors[] = _charsetPrepare ( $c [ 'name' ] );
 
+    // Typ übersetzen wir, da die Aufschlüsselung der IMDb zu detailliert ist
+    $type = $movie->movietype();
+
+    switch ( $type )
+    {
+        case 'Video':
+        case 'TV Movie':
+            $type = 'Movie';
+            break;
+
+        case 'TV Series':
+        case 'TV Mini Series':
+            $type = 'Series';
+            break;
+
+        case 'TV Special':
+            $type = 'Special';
+            break;
+    }
     return [
         '@imdb_id'         => intval ( $imdb_id ),
         '$imdb_photo'      => $movie->photo_localurl(),
@@ -78,7 +97,7 @@ function getIMDbMovie ( $imdb_id )
         '$imdb_title_orig' => _charsetPrepare ( $title_orig ),
         '$imdb_title_eng'  => _charsetPrepare ( $title_eng  ),
         '@imdb_year'       => $movie->year(),
-        '$imdb_type'       => $movie->movietype(),
+        '$imdb_type'       => $type,
         '$fulltext'        => '',
 
         'genres'     => $movie->genres(),
