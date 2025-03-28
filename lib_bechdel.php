@@ -11,7 +11,9 @@ function getBechdelInfo ( $imdb_id )
 {
     $api_url = 'http://bechdeltest.com/api/v1/getMovieByImdbId?imdbid=' . str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT );
 
-    if ( false !== ( $res = file_get_contents ( $api_url ) ) )
+    $opts = stream_context_create ( [ 'http' => [ 'timeout' => 5 ]] );
+
+    if ( false !== ( $res = file_get_contents ( $api_url, false, $opts ) ) )
     {
         $info = json_decode ( $res );
 

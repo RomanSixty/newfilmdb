@@ -98,7 +98,8 @@ class sqlitedb extends SQLite3
         }
 
         // die restlichen
-        $this -> exec ( $sql . implode ( ',', $values ) );
+        if ( !empty ( $values ) )
+            $this -> exec ( $sql . implode ( ',', $values ) );
     }
 
     /**

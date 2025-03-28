@@ -24,10 +24,8 @@ function getIMDbMovie ( $imdb_id )
     $directors = $actors = array();
 
     if ( empty ( $title_orig ) )
-        $title_orig = $title_eng = $movie -> title();
+        $title_orig = $title_eng = $title_deu = $movie -> title();
 
-    // deutscher Titel
-    $title_deu = $movie -> title();
     $deu_found = $eng_found = false;
 
     foreach ( (array) $movie -> alsoknow() as $aka )

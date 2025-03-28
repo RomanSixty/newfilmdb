@@ -171,8 +171,7 @@ function getMovieDetails ( $imdb_id )
     $movie [ 'IMDBID_PADDED'  ] = str_pad ( $movie [ 'imdb_id' ], 7, '0', STR_PAD_LEFT );
     $movie [ 'TITLE_DIFF'     ] = (    stripos ( $movie [ 'imdb_title_deu' ], $movie [ 'imdb_title_orig' ] ) === false
                                     && stripos ( $movie [ 'imdb_title_deu' ], $movie [ 'imdb_title_eng'  ] ) === false );
-    $movie [ 'TITLE_DIFF_ENG' ] = (    stripos ( $movie [ 'imdb_title_eng' ], $movie [ 'imdb_title_orig' ] ) === false
-                                    && stripos ( $movie [ 'imdb_title_eng' ], $movie [ 'imdb_title_deu'  ] ) === false );
+    $movie [ 'TITLE_DIFF_ENG' ] = ( stripos ( $movie [ 'imdb_title_eng' ], $movie [ 'imdb_title_orig' ] ) === false );
 
     if (    empty ( $movie [ 'custom_notes'   ] )
          && empty ( $movie [ 'custom_quality' ] ) )
