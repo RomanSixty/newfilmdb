@@ -1,264 +1,212 @@
-$(function(){
+window.onload = function(){
 
-	/* Dashbar */
+    /* Dashbar */
 
-	$('#searchform')
-		.on('submit', function(){
-			$.ajax({
-				url: 'rpc.php',
-				dataType: 'json',
-				data: $('#searchform').serialize(),
-				success: function(data) {
-					$('#list').html(data.html);
-					$('#num_results').html(data.count);
-					initContent();
-				}
-			});
-			return false;
-		})
-        .on('click', '.list_type a', function(e){
-            typeFilter( e, $(this) );
+    document.getElementById('searchform').addEventListener('submit', function(e){
+        e.preventDefault();
 
-            return false;
-        })
-		.on('click', '.list_genre a', function(e){
-			genreFilter( e, $(this) );
+        let formData = new FormData(this);
 
-			return false;
-		})
-		.on('click', '.list_director a', function(e){
-			directorFilter ( e, $(this) );
+        fetch('rpc.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('list').innerHTML = data.html;
+                document.getElementById('num_results').innerHTML = data.count;
+                initContent();
+            });
+    });
 
-			return false;
-		})
-		.on('click', '.list_actor a', function(e){
-			actorFilter ( e, $(this) );
+    document.querySelectorAll('.list_type a').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            makeFilter(e, this, 'type');
+        });
+    });
 
-			return false;
-		});
+    document.querySelectorAll('.list_genre a').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            makeFilter(e, this, 'genre');
+        });
+    });
 
-	$('.checkbutton .check').on('click', function(){
-		$('#searchform').submit();
-	});
+    document.querySelectorAll('.list_director a').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            makeFilter(e, this, 'director');
+        });
+    });
 
-	/* Details */
+    document.querySelectorAll('.list_actor a').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            makeFilter(e, this, 'cast');
+        });
+    });
 
-	$('#details')
-		.on('click', '.genre a', function(e){
-			genreFilter( e, $(this) );
+    // Sprachfilter-Checkboxen
+    document.querySelectorAll('.checkbutton .check').forEach(function(button) {
+        button.addEventListener('click', function() {
+            document.getElementById('searchform').requestSubmit();
+        });
+    });
 
-			return false;
-		})
-		.on('click', 'ul.directors a', function(e){
-			directorFilter ( e, $(this) );
 
-			return false;
-		})
-		.on('click', 'ul.actors a', function(e){
-			actorFilter ( e, $(this) );
+    /* Details */
 
-			return false;
-		})
-		.on('click', '.editlink', function(){
-			var imdb_id = $(this).attr('data-imdbid');
+    document.getElementById('details').addEventListener('click', function(e) {
+        if (e.target.matches('.genre a')) {
+            e.preventDefault();
+            makeFilter(e, e.target, 'genre');
+        } else if (e.target.matches('.type a')) {
+            e.preventDefault();
+            makeFilter(e, e.target, 'type');
+        } else if (e.target.matches('ul.directors a')) {
+            e.preventDefault();
+            makeFilter(e, e.target, 'director');
+        } else if (e.target.matches('ul.actors a')) {
+            e.preventDefault();
+            makeFilter(e, e.target, 'cast');
+        } else if (e.target.matches('.editlink')) {
+            e.preventDefault();
+            let imdb_id = e.target.getAttribute('data-imdbid');
+            fetch('rpc.php?act=edit&imdb_id=' + imdb_id)
+                .then(response => response.text())
+                .then(data => {
+                    document.querySelector('#details .associated').innerHTML = data;
+                    initForm();
+                });
+        } else if (e.target.matches('.addlink')) {
+            e.preventDefault();
+            let imdb_id = e.target.getAttribute('data-imdbid');
+            fetch('rpc.php?act=add&imdb_id=' + imdb_id)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('details').innerHTML = data;
+                    initForm();
+                });
+        } else if (e.target.matches('.updatelink')) {
+            e.preventDefault();
+            document.getElementById('details').insertAdjacentHTML('beforeend', '<div id="overlay"></div>');
+            let imdb_id = e.target.getAttribute('data-imdbid');
+            fetch('rpc.php?act=update_imdb&imdb_id=' + imdb_id)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('details').innerHTML = data;
+                });
+        }
+    });
 
-			$.ajax({
-				url: 'rpc.php',
-				dataType: 'html',
-				data: 'act=edit&imdb_id=' + imdb_id,
-				success: function(data) {
-					$('#details .associated').html(data);
-					initForm();
-				}
-			});
+    document.getElementById('list').addEventListener('click', function(e) {
+        if (e.target.matches('.movie')) {
+            let imdb_id = e.target.getAttribute('data-imdbid');
+            fetch('rpc.php?act=details&imdb_id=' + imdb_id)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('details').innerHTML = data;
+                });
+        }
+    });
+};
 
-			return false;
-		})
-		.on('click', '.addlink', function(){
-			var imdb_id = $(this).attr('data-imdbid');
-
-			$.ajax({
-				url: 'rpc.php',
-				dataType: 'html',
-				data: 'act=add&imdb_id=' + imdb_id,
-				success: function(data) {
-					$('#details').html(data);
-					initForm();
-				}
-			});
-
-			return false;
-		})
-		.on('click', '.updatelink', function(){
-			$('#details').append('<div id="overlay"></div>');
-
-			var imdb_id = $(this).attr('data-imdbid');
-
-			$.ajax({
-				url: 'rpc.php',
-				dataType: 'html',
-				data: 'act=update_imdb&imdb_id=' + imdb_id,
-				success: function(data) {
-					$('#details').html(data);
-				}
-			});
-
-			return false;
-		});
-
-	$('#list').on('click', '.movie', function(){
-		var imdb_id = $(this).attr('data-imdbid');
-
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'html',
-			data: 'act=details&imdb_id=' + imdb_id,
-			success: function(data) {
-				$('#details').html(data);
-			}
-		});
-	});
-});
-
-function initContent()
-{
-	$('.filter input').each(function(){
-		initFilter ( $(this).attr('id') );
-	});
+/**
+ * Filter initialisieren beim Neuladen
+ */
+function initContent() {
+    document.querySelectorAll('.filter input[type="hidden"]').forEach(el => initFilter(el.id));
 }
 
-function initForm()
-{
-	$('#edit_movie').submit(function(){
-		$('#details').append('<div id="overlay"></div>');
+/**
+ * Formular zum Bearbeiten oder Hinzufügen
+ */
+function initForm() {
+    document.getElementById('edit_movie').addEventListener('submit', function(e){
+        e.preventDefault();
 
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'html',
-			data: $('#edit_movie').serialize(),
-			success: function(data) {
-				$('#details').html(data);
+        document.getElementById('details').insertAdjacentHTML('beforeend', '<div id="overlay"></div>');
 
-				// da wir nicht wissen, ob hier eine Detailansicht
-				// oder ein Formular zurückkommt, machen wir beides
-				initForm();
-			}
-		});
-		return false;
-	});
+        let formData = new FormData(this);
 
-	$('#edit_movie .abort').click(function(){
-		$('#details').append('<div id="overlay"></div>');
+        fetch('rpc.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('details').innerHTML = data;
+                initForm();
+            });
+    });
 
-		var imdb_id = $(this).attr('data-imdbid');
+    document.querySelector('#edit_movie .abort').addEventListener('click', function(e){
+        e.preventDefault();
 
-		$.ajax({
-			url: 'rpc.php',
-			dataType: 'html',
-			data: 'act=details&imdb_id=' + imdb_id,
-			success: function(data) {
-				$('#details').html(data);
-			}
-		});
-	});
+        document.getElementById('details').insertAdjacentHTML('beforeend', '<div id="overlay"></div>');
+
+        let imdb_id = this.getAttribute('data-imdbid');
+
+        fetch('rpc.php?act=details&imdb_id=' + imdb_id, {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('details').innerHTML = data;
+            });
+    });
 }
 
-function initFilter ( id )
-{
-	$('#dashboard label.filter[for=' + id + ']').unbind('click').click(function(){
-		$('input[id=' + id + ']').remove();
-		$(this).remove();
+/**
+ * Klick auf Filter soll diesen wieder entfernen
+ * @param {String} id Filter-ID
+ */
+function initFilter(id){
+    document.querySelector('#dashboard label.filter[for=' + id + ']').addEventListener('click', function(e){
+        e.preventDefault();
 
-		$('#searchform').submit();
-	});
+        document.getElementById(id).remove();
+        e.target.remove();
+
+        document.getElementById('searchform').requestSubmit();
+    });
 }
 
-function typeFilter ( e, $el )
-{
-    var type_value= $el.data('value');
-    var type_name = $el.html();
+/**
+ * Filter erzeugen
+ * @param {Event} e Click-Event
+ * @param {Element} el angeklickte Kategorie
+ * @param {String} which welche Kategorie ('genre'/'type'/'director'/'cast')
+ */
+function makeFilter(e, el, which){
+    let value= el.getAttribute('data-id');
+    let name = el.innerText;
 
-    if ( e.shiftKey )
-    {
-        type_value = - type_value;
-        type_name  = '-' + type_name;
+    let filterid = which + '_' + value.toString();
+
+    // wenn der Filter schon existiert, dann entfernen
+    if ( document.getElementById(filterid) ) {
+        document.getElementById(filterid).remove();
+        document.querySelector('[for="'+filterid+'"]').remove();
     }
 
-    timest = +new Date();
+    // Kategorien können negativ gefiltert werden
+    // (z.B. Filme *außer* Thriller)
+    if (which === 'genre' || which === 'type') {
+        if ( e.shiftKey ) {
+            value = - value;
+            name  = '-' + name;
+        }
+    }
 
-    filterid = 'type' + timest;
+    let html = '<input id="'+filterid+'" type="hidden" name="'+which+'[]" value="'+value+'" /><label class="filter" for="'+filterid+'">'+name+'</label>';
 
-    html  = '<input id="' + filterid + '" type="hidden" name="type[]" value="' + type_value + '" />';
-    html += '<label class="filter" for="' + filterid + '">' + type_name + '</label>';
+    document.getElementById(which).insertAdjacentHTML('afterend', html);
+    initFilter(filterid);
 
-    $('label[id=type]').after(html);
-    initFilter ( filterid );
-
-    $('#fulltext').val('');
-    $('#searchform').submit();
-}
-
-function genreFilter ( e, $el )
-{
-	var genre_id   = $el.data('id');
-	var genre_name = $el.html();
-
-	if ( e.shiftKey )
-	{
-		genre_id   = - genre_id;
-		genre_name = '-' + genre_name;
-	}
-
-	timest = +new Date();
-
-	filterid = 'genre' + timest;
-
-	html  = '<input id="' + filterid + '" type="hidden" name="genre[]" value="' + genre_id + '" />';
-	html += '<label class="filter" for="' + filterid + '">' + genre_name + '</label>';
-
-	$('label[id=genre]').after(html);
-	initFilter ( filterid );
-
-	$('#fulltext').val('');
-	$('#searchform').submit();
-}
-
-function directorFilter ( e, $el )
-{
-	if ( !e.shiftKey )
-		$('#dashboard .dir_filter').remove();
-
-	timest = +new Date();
-
-	filterid = 'dir' + timest;
-
-	html  = '<input class="dir_filter" id="' + filterid + '" type="hidden" name="director[]" value="' + $el.data('id') + '" />';
-	html += '<label class="filter" for="' + filterid + '">' + $el.html() + '</label>';
-
-	$('label[id=director]').after(html);
-	initFilter ( filterid );
-
-	$('#fulltext').val('');
-	$('#searchform').submit();
-}
-
-function actorFilter ( e, $el )
-{
-	if ( !e.shiftKey )
-		$('#dashboard .act_filter').remove();
-
-	timest = +new Date();
-
-	filterid = 'act' + timest;
-
-	html  = '<input class="act_filter" id="' + filterid + '" type="hidden" name="cast[]" value="' + $el.data('id') + '" />';
-	html += '<label class="filter act_filter" for="' + filterid + '">' + $el.html() + '</label>';
-
-	$('label[id=cast]').after(html);
-	initFilter ( filterid );
-
-	$('#fulltext').val('');
-	$('#searchform').submit();
+    document.getElementById('fulltext').value = '';
+    document.getElementById('searchform').requestSubmit();
 }
 
 initContent();

@@ -256,6 +256,10 @@ li[data-count]:after {
 	padding-right: 60px;
 }
 
+#details .button img {
+  pointer-events: none;
+}
+
 #details .editlink {
 	position: absolute;
 	right: 20px;

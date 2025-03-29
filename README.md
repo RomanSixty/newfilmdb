@@ -34,11 +34,7 @@ This project is a custom built database for my movie collection. I started out u
 * internal links from detail view to lists filtered by genre, cast or directors
 * quick filter for the 25 most referenced cast members and directors
 
-## Requirements (contained in this repository)
-
-  * [jQuery](http://jquery.com/) for some AJAX stuff
-
-### Other requirements (not contained):
+## Requirements:
 
   * [imdbGraphQLPHP](https://github.com/duck7000/imdbGraphQLPHP) as IMDb data scraper,
     you can get it via `composer install`

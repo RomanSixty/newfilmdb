@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
   <head>
     <title>LX' Filmdb</title>
     <meta charset="utf-8"/>
@@ -35,7 +35,6 @@ echo '</aside>';
 
 ?>
 
-  <script src="js/jquery-1.7.min.js"></script>
   <script src="js/newfilmdb.js"></script>
   </body>
 </html>
