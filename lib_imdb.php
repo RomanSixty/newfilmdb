@@ -89,6 +89,11 @@ function getIMDbMovie ( $imdb_id )
         case 'TV Special':
             $type = 'Special';
             break;
+
+        case 'TV Short':
+        case 'Short':
+            $type = 'Short';
+            break;
     }
 
     // Genres in einfaches Array übersetzen
