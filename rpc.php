@@ -43,6 +43,9 @@ if ( !empty ( $_REQUEST [ 'act' ] ) ) switch ( $_REQUEST [ 'act' ] )
             // Bechdel-Daten und weitere Ratings ergänzen
             $movie = array_merge ( $movie, getBechdelInfo ( $imdb_id ), getOMDbRatings ( $imdb_id ) );
 
+            $movie [ '@metacritic'     ] = $movie [ 'metacritic'     ];
+            $movie [ '@rottentomatoes' ] = $movie [ 'rottentomatoes' ];
+
             $db -> saveMovie ( $movie );
         }
 

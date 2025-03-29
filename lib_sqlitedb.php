@@ -331,7 +331,7 @@ class sqlitedb extends SQLite3
             $where [ 'lang' ] = '(' . implode ( ' OR ', $lang_where ) . ')';
         }
 
-        // Regiefilter
+        // Regiefilter (ODER)
         if ( !empty ( $form [ 'director' ] ) && is_array ( $form [ 'director' ] ) )
         {
             foreach ( $form [ 'director' ] as $value )
@@ -341,7 +341,7 @@ class sqlitedb extends SQLite3
             $where[] = '(' . implode ( ' OR ', $dir_where ) . ')';
         }
 
-        // Cast-Filter
+        // Cast-Filter (UND)
         if ( !empty ( $form [ 'cast' ] ) && is_array ( $form [ 'cast' ] ) )
         {
             $idx = 0;
