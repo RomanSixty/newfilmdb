@@ -531,6 +531,14 @@ class sqlitedb extends SQLite3
      */
     public function getCastList()
     {
+        // ein paar Namen wollen wir da auch nicht, weil das nur oft gebuchte Extras sind...
+        // 39125 => Spencer Kayden
+        // 31557 => Jimmy Star
+        // 31539 => Arnold Montey
+        // 18119 => Greg Bronson
+        // 8960  => Bess Flowers
+        // 1632  => Melora Walters
+
         return $this -> results ( 'SELECT
                 c.cast_id,
                 "cast",
@@ -541,6 +549,7 @@ class sqlitedb extends SQLite3
             LEFT JOIN genre2movie g2m_2 ON c2m.imdb_id=g2m_2.imdb_id AND g2m_2.genre_id = 6
             WHERE g2m_1.genre_id IS NULL
               AND g2m_2.genre_id IS NULL
+              AND c.cast_id NOT IN (39125, 31557, 31539, 18119, 8960, 1632)
             GROUP BY c2m.cast_id
             ORDER BY
                 COUNT(c2m.imdb_id) DESC,
@@ -570,6 +579,44 @@ class sqlitedb extends SQLite3
                 COUNT(d2m.imdb_id) DESC,
                 AVG(d2m.sort) ASC
             LIMIT 25' );
+    }
+
+    /**
+     * Bechdel-Ratings aktualisieren
+     * @param array $data Bechdel-Daten
+     */
+    public function saveBechdelCache ( $data )
+    {
+        $sql = 'REPLACE INTO bechdel_cache(
+                imdb_id,
+                bechdel_id,
+                bechdel_rating,
+                title
+            ) VALUES ';
+
+        foreach ( $data as $d )
+            $sql .= '("' . implode ( '", "', $d ) . '"),';
+
+        $this -> results ( substr ( $sql, 0, -1 ) );
+    }
+
+    /**
+     * Detail-Informationen eines Films
+     *
+     * @param int $imdb_id IMDb-ID
+     * @return array|false Bechdel-Rating
+     */
+    function getBechdelRating ( $imdb_id )
+    {
+        $movie = $this -> results (
+            'SELECT * FROM bechdel_cache WHERE imdb_id=:imdb_id',
+            array ( '@imdb_id' => $imdb_id )
+        );
+
+        if ( !empty ( $movie ) )
+            return $movie [ 0 ];
+
+        return false;
     }
 
     /**

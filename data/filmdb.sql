@@ -67,3 +67,12 @@ ALTER TABLE "movie" ADD COLUMN "imdb_type" VARCHAR NOT NULL DEFAULT "Movie";
 -- Update 2023-06-10: Metacritic and RottenTomatoes ratings
 ALTER TABLE "movie" ADD COLUMN "metacritic" INTEGER;
 ALTER TABLE "movie" ADD COLUMN "rottentomatoes" INTEGER;
+
+-- Update 2026-03-25: Bechdel-Daten cachen, da die API abgeschaltet wurde
+CREATE TABLE IF NOT EXISTS "bechdel_cache" (
+  "imdb_id" INTEGER NULL,
+  "bechdel_id" INTEGER NULL,
+  "bechdel_rating" INTEGER NULL,
+  "title" VARCHAR NULL,
+  PRIMARY KEY ("imdb_id")
+);
