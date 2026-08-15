@@ -23,12 +23,14 @@ function getIMDbMovie ( $imdb_id )
 
     $movie = new \Imdb\Title ( str_pad ( $imdb_id, 7, '0', STR_PAD_LEFT ), $config );
 
-    $title_orig = $title_eng = $title_deu = $movie -> originalTitle();
+    $movie_meta = $movie->titleYearMovietype();
+
+    $title_orig = $title_eng = $title_deu = $movie_meta [ 'originalTitle' ];
 
     $directors = $actors = array();
 
     if ( empty ( $title_orig ) )
-        $title_orig = $title_eng = $title_deu = $movie -> title();
+        $title_orig = $title_eng = $title_deu = $movie_meta [ 'title' ];
 
     $deu_found = $eng_found = false;
 
@@ -72,7 +74,7 @@ function getIMDbMovie ( $imdb_id )
         $actors[] = _charsetPrepare ( $c [ 'name' ] );
 
     // Typ übersetzen wir, da die Aufschlüsselung der IMDb zu detailliert ist
-    $type = $movie->movietype();
+    $type = $movie_meta [ 'movietype' ];
 
     switch ( $type )
     {
@@ -106,18 +108,19 @@ function getIMDbMovie ( $imdb_id )
             $genres[] = $genre [ 'mainGenre' ];
 
     $runtime = $movie->runtime();
+    $rating = $movie->ratingVotes();
 
     return [
         '@imdb_id'         => intval ( $imdb_id ),
         '$imdb_photo'      => $movie->photoLocalurl(),
         '$imdb_plot'       => _charsetPrepare ( $movie->plotoutline() ),
-        '$imdb_rating'     => $movie->rating(),
+        '$imdb_rating'     => $rating [ 'rating' ],
         '@imdb_top250'     => intval ( $movie->top250() ),
         '@imdb_runtime'    => intval ( $runtime [ 0 ][ 'time' ] ),
         '$imdb_title_deu'  => _charsetPrepare ( $title_deu  ),
         '$imdb_title_orig' => _charsetPrepare ( $title_orig ),
         '$imdb_title_eng'  => _charsetPrepare ( $title_eng  ),
-        '@imdb_year'       => $movie->year(),
+        '@imdb_year'       => $movie_meta [ 'year' ],
         '$imdb_type'       => $type,
         '$fulltext'        => '',
 
