@@ -1,0 +1,501 @@
+// Variables
+$background_dark: #999;
+$background_light: #ddd;
+
+// Fonts
+
+@font-face {
+  font-display: swap;
+  font-family: 'Lusitana';
+  font-style: normal;
+  font-weight: normal;
+  src: url('fonts/lusitana-v14-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Lusitana';
+  font-style: normal;
+  font-weight: bold;
+  src: url('fonts/lusitana-v14-latin-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: normal;
+  src: url('fonts/cinzel-v26-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: bold;
+  src: url('fonts/cinzel-v26-latin-600.woff2') format('woff2');
+}
+
+
+
+* {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 1em;
+  font-family: "Lusitana", Tahoma, Verdana, sans-serif;
+}
+
+body {
+  padding-top: 40px;
+  padding-right: 550px;
+  background: $background_dark;
+}
+
+a,
+a:visited {
+  color: #136cb2;
+}
+
+a:hover {
+  color: #2f98e9;
+}
+
+h1, h2 {
+  font-family: "Cinzel", Times, serif;
+}
+
+h1 .subtitle {
+  display: block;
+  font-size: .6em;
+}
+
+ul, li {
+  list-style-type: none;
+}
+
+dl {
+  font-size: 0.9em;
+  clear: left;
+}
+
+.img {
+  width: 214px;
+  float: left;
+  height: 317px;
+  overflow: hidden;
+
+  img {
+    width: 214px;
+  }
+}
+
+li[data-count]:after {
+  content: ' (' attr(data-count) ')';
+  font-size: 0.7em;
+  color: #666;
+}
+
+#overlay {
+  background: rgba(255, 255, 255, 0.7);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+
+/* Liste */
+
+#list {
+  .movie {
+    float: left;
+    width: 214px;
+    height: 317px;
+    margin: 5px;
+    cursor: pointer;
+    position: relative;
+    background: #fff;
+    box-shadow: 0 0 40px #000 inset;
+    overflow: hidden;
+
+    > * {
+      pointer-events: none;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+
+      transition: all .3s;
+
+      background: linear-gradient(45deg, #fff 0%, $background_light 45%, $background_dark 51%, $background_dark 100%);
+      box-shadow: -1px 1px 3px rgba(0, 0, 0, .2);
+    }
+
+    .meta {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(20, 20, 20, 0.85);
+      color: #fff;
+      padding: 3px 7px;
+      z-index: 5;
+      opacity: 0;
+      transition: all .3s;
+    }
+
+    &:hover,
+    &:focus-visible {
+      &:after {
+        width: 20px;
+        height: 20px;
+      }
+
+      .meta {
+        opacity: 1;
+      }
+    }
+
+    p {
+      font-size: 0.9em;
+
+      span {
+        float: right;
+      }
+    }
+
+    img:not(.ownphoto) {
+      outline: 3px solid red;
+      outline-offset: -3px;
+    }
+  }
+}
+
+
+
+/* Dashboard */
+
+#dashboard {
+  position: fixed;
+  top: 0;
+  left: -5px;
+  right: 550px;
+  background: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  z-index: 10;
+
+  .dropdown {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.6);
+    padding: 5px;
+    margin-left: -20px;
+    top: -1000px;
+    opacity: 0;
+    transition: opacity .5s;
+  }
+
+  .filter:hover .dropdown {
+    top: 30px;
+    opacity: 1;
+  }
+
+  #fulltext {
+    padding: 0 5px;
+    font-size: 0.8em;
+    box-shadow: 1px 1px 2px #666 inset;
+  }
+
+  label.section {
+    padding: 0 5px 0 0;
+    text-shadow: 1px 1px #444;
+  }
+
+  section {
+    &.filter,
+    &.counter {
+      float: left;
+      padding: 5px 20px;
+      border-left: 1px solid rgba(70, 70, 70, 0.8);
+      border-right: 1px solid rgba(50, 50, 50, 0.8);
+    }
+
+    &.counter {
+      float: right;
+    }
+  }
+
+  label.filter,
+  .checkbutton {
+    background: #666;
+    font-size: 0.8em;
+    padding: 0 6px;
+    cursor: pointer;
+    margin-left: 3px;
+    text-shadow: 1px 1px #333;
+  }
+
+  .checkbutton input {
+    position: relative;
+    top: 2px;
+  }
+}
+
+/* Details */
+#details {
+  position: fixed;
+  background: $background_light;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 510px;
+  padding: 20px;
+  box-shadow: 0 10px 15px rgba(30, 30, 30, 0.8);
+  z-index: 11;
+  text-shadow: 1px 1px #fff;
+
+  header h1 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    padding-right: 60px;
+  }
+
+  .button img {
+    pointer-events: none;
+  }
+
+  .editlink {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+  }
+
+  .card {
+    padding: 15px 20px;
+    position: relative;
+    box-shadow: 2px 2px 5px #bbb;
+    background: #fafafa;
+
+    &:after {
+      content: '.';
+      clear: both;
+      visibility: hidden;
+      display: block;
+      height: 0;
+    }
+  }
+
+  .main_details {
+    float: right;
+    width: 240px;
+  }
+
+  .personal {
+    float: right;
+    margin: 0 0 20px 20px;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    margin-bottom: 7px;
+    hyphens: auto;
+  }
+
+  p {
+    margin-bottom: 7px;
+    font-size: 0.9em;
+  }
+
+  .year_runtime {
+    color: #666;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .associated {
+    clear: both;
+    padding-top: 20px;
+
+    ul {
+      column-count: 3;
+      column-gap: 0;
+
+      margin: 5px 0 20px 0;
+      font-size: 0.9em;
+    }
+
+    li {
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      margin-top: -1px;
+      padding: 2px 5px;
+    }
+  }
+
+  dt {
+    font-weight: bold;
+    float: left;
+    width: 130px;
+  }
+
+  .ratings {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+
+    > *:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  .star {
+    background: url("../fdb_img/star.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    height: 39px;
+    line-height: 42px;
+    text-align: center;
+    vertical-align: middle;
+    width: 44px;
+  }
+
+  .trophy {
+    background: url("../fdb_img/trophy.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    font-family: Tahoma, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    height: 39px;
+    line-height: 32px;
+    text-align: center;
+    vertical-align: middle;
+    width: 39px;
+  }
+
+  .metacritic {
+    height: 35px;
+    width: 35px;
+    line-height: 35px;
+    text-align: center;
+    border-radius: 6px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: none;
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 2px 10px 2px 2px;
+
+    &.green {
+      background: #66cc33;
+    }
+
+    &.yellow {
+      background: #ffcc33;
+    }
+
+    &.red {
+      background: #ff0000;
+    }
+  }
+
+  .rottentomatoes {
+    white-space: nowrap;
+    font-weight: bold;
+    line-height: 15px;
+
+    img {
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  span.csv:after {
+    content: ', ';
+  }
+
+  span.csv:last-child:after {
+    content: '';
+  }
+
+  .addlink {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .updatelink {
+    position: absolute;
+    right: 80px;
+    bottom: 20px;
+  }
+
+  .date_update {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 10px;
+  }
+}
+
+/* Bearbeitungsformular */
+#edit_movie {
+  fieldset {
+    margin: 20px;
+  }
+
+  label {
+    margin: 0 15px 0 5px;
+    font-weight: normal;
+  }
+
+  legend {
+    margin-bottom: 6px;
+
+    label {
+      font-weight: bold;
+      margin: 0;
+    }
+  }
+
+  textarea {
+    width: 100%;
+  }
+
+  .button {
+    font-size: 0.9em;
+    padding: 7px 20px;
+    cursor: pointer;
+    margin: 20px;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  .submit {
+    background: #136cb2;
+    color: #fff;
+    text-shadow: 1px 1px #333;
+    float: right;
+  }
+
+  .abort {
+    background: #d0d0d0;
+    text-shadow: 1px 1px #fff;
+  }
+}
